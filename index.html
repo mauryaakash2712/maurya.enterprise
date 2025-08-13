@@ -1,17 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maurya Enterprise</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #333; }
-        p { font-size: 18px; color: #555; }
-        footer { margin-top: 50px; font-size: 14px; color: #888; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+        }
+        header img {
+            max-width: 100px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        nav {
+            background: #34495e;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .service {
+            flex: 1 1 250px;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        @media(max-width: 600px) {
+            nav {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Maurya Enterprise</h1>
-    <p>Our official website is coming soon! Stay tuned.</p>
-    <footer>© 2025 Maurya Enterprise</footer>
+
+    <header>
+        <img src="logo.png" alt="Maurya Enterprise Logo">
+        <h1>Maurya Enterprise</h1>
+        <p>Your Trusted Partner in Quality & Innovation</p>
+    </header>
+
+    <nav>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <section id="about">
+        <h2>About Us</h2>
+        <p>Maurya Enterprise is committed to delivering top-quality products and services to meet the needs of our customers. 
+        We believe in innovation, reliability, and customer satisfaction as the foundation of our success.</p>
+    </section>
+
+    <section id="services">
+        <h2>Our Services</h2>
+        <div class="services">
+            <div class="service">
+                <h3>Product Sales</h3>
+                <p>High-quality products from trusted brands at competitive prices.</p>
+            </div>
+            <div class="service">
+                <h3>Custom Solutions</h3>
+                <p>Tailored solutions designed to fit your business needs.</p>
+            </div>
+            <div class="service">
+                <h3>Support & Maintenance</h3>
+                <p>Reliable after-sales support and regular maintenance services.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Email: <a href="mailto:info@maurya.enterprise">info@maurya.enterprise</a></p>
+        <p>Phone: +91-9876543210</p>
+        <p>Address: Your Office Address, City, India</p>
+    </section>
+
+    <footer>
+        &copy; 2025 Maurya Enterprise. All rights reserved.
+    </footer>
+
 </body>
 </html>
