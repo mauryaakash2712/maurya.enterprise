@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MTech - Premium Electronics Store</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="auth.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -29,13 +30,183 @@
                 
                 <!-- Header Actions -->
                 <div class="header-actions">
-                    <!-- User Account Section -->
-                    <div class="user-section" id="userSection">
-                        <!-- Logged Out State -->
-                        <div class="auth-buttons" id="authButtons">
-                            <button class="login-btn" id="loginBtn">Sign In</button>
-                            <button class="register-btn" id="registerBtn">Sign Up</button>
-                        </div>
-                        
-                        <!-- Logged In State -->
-                        <div class="user-
+                    <button class="account-btn" id="accountBtn">
+                        <span class="account-icon">👤</span>
+                        <span class="account-text">Account</span>
+                    </button>
+                    <button class="cart-btn" id="cartBtn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <a href="admin.html" class="admin-link" style="margin-left: 10px; color: var(--primary-color); text-decoration: none; font-weight: 500;">Admin Panel</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="container">
+                <ul class="nav-list" id="navList">
+                    <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                    <!-- Categories will be loaded dynamically -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2 class="hero-title">Latest Electronics & Gadgets</h2>
+                    <p class="hero-subtitle">Discover premium quality electronics at unbeatable prices</p>
+                    <button class="cta-btn">Shop Now</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories">
+            <div class="container">
+                <h2 class="section-title">Shop by Category</h2>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="featured-products">
+            <div class="container">
+                <h2 class="section-title">Featured Products</h2>
+                <div class="products-grid" id="featuredProducts">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Sellers -->
+        <section class="best-sellers">
+            <div class="container">
+                <h2 class="section-title">Best Sellers</h2>
+                <div class="products-grid" id="bestSellers">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div class="product-details" id="productDetails">
+                <!-- Product details will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button class="close-cart" id="closeCart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be loaded dynamically -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: $<span id="cartTotal">0.00</span></strong>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content checkout-content">
+            <span class="close" onclick="document.getElementById('checkoutModal').style.display='none'">&times;</span>
+            <h2>Checkout</h2>
+            <form class="checkout-form" id="checkoutForm">
+                <div class="form-group">
+                    <label for="customerName">Full Name</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerEmail">Email</label>
+                    <input type="email" id="customerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">Phone</label>
+                    <input type="tel" id="customerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Address</label>
+                    <textarea id="customerAddress" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select Payment Method</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="upi">UPI</option>
+                        <option value="netbanking">Net Banking</option>
+                        <option value="cod">Cash on Delivery</option>
+                    </select>
+                </div>
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-items" id="summaryItems"></div>
+                    <div class="summary-total">
+                        <strong>Total: $<span id="summaryTotal">0.00</span></strong>
+                    </div>
+                </div>
+                <button type="submit" class="place-order-btn">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About MTech</h3>
+                    <p>Your trusted partner for premium electronics and gadgets.</p>
+                    <p class="brand-ownership"><strong>MTech</strong> is a registered brand owned by <strong>Maurya Enterprises</strong>.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul id="footerCategories">
+                        <!-- Categories will be loaded dynamically -->
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p>📧 info@mtech.com</p>
+                    <p>📞 +91 98765 43210</p>
+                    <p>📍 Delhi, India</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Maurya Enterprises. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="customer.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
