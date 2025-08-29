@@ -1,875 +1,1019 @@
-/* Authentication Styles (auth.css) */
-
-/* Auth Modal Styles */
-.auth-modal {
-    max-width: 450px;
-    margin: 2% auto;
-}
-
-.auth-container {
-    padding: 2rem;
-}
-
-.auth-container h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
-    font-weight: 600;
-}
-
-.auth-form {
-    margin-bottom: 1.5rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-    background: white;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.password-container {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #666;
-    padding: 4px;
-}
-
-.toggle-password:hover {
-    color: var(--primary-color);
-}
-
-/* Mobile Input */
-.mobile-input {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.country-code {
-    min-width: 120px;
-    flex-shrink: 0;
-}
-
-/* Password Strength Indicator */
-.password-strength {
-    margin-top: 0.5rem;
-}
-
-.strength-bar {
-    height: 4px;
-    background: #eee;
-    border-radius: 2px;
-    margin-bottom: 0.25rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.strength-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 0;
-    background: #ff6b35;
-    transition: width 0.3s ease, background-color 0.3s ease;
-}
-
-.strength-bar.weak::after {
-    width: 33%;
-    background: #ff4757;
-}
-
-.strength-bar.medium::after {
-    width: 66%;
-    background: #ffa502;
-}
-
-.strength-bar.strong::after {
-    width: 100%;
-    background: #2ed573;
-}
-
-.strength-text {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-/* Form Options */
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1.5rem 0;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.forgot-password {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.forgot-password:hover {
-    text-decoration: underline;
-}
-
-/* Auth Buttons */
-.auth-btn {
-    width: 100%;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 0.5rem;
-}
-
-.auth-btn.primary {
-    background: var(--primary-color);
-    color: white;
-}
-
-.auth-btn.primary:hover {
-    background: #e55a2b;
-    transform: translateY(-1px);
-}
-
-.auth-btn.secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.auth-btn.secondary:hover {
-    background: #545b62;
-}
-
-.auth-btn.danger {
-    background: #dc3545;
-    color: white;
-}
-
-.auth-btn.danger:hover {
-    background: #c82333;
-}
-
-.auth-btn.admin-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.auth-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Header Auth Buttons */
-.auth-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.login-btn, .register-btn {
-    padding: 8px 16px;
-    border: 2px solid var(--primary-color);
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.login-btn {
-    background: white;
-    color: var(--primary-color);
-}
-
-.login-btn:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-.register-btn {
-    background: var(--primary-color);
-    color: white;
-}
-
-.register-btn:hover {
-    background: white;
-    color: var(--primary-color);
-}
-
-/* User Menu */
-.user-menu {
-    position: relative;
-}
-
-.user-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    min-width: 250px;
-    z-index: 1000;
-    display: none;
-}
-
-.user-menu:hover .user-dropdown,
-.user-dropdown:hover {
-    display: block;
-}
-
-.user-info {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-}
-
-.user-name {
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.user-email {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.dropdown-menu {
-    padding: 0.5rem 0;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 0.75rem 1rem;
-    color: var(--text-color);
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.dropdown-menu a:hover {
-    background: var(--light-gray);
-}
-
-/* Social Login */
-.auth-divider {
-    text-align: center;
-    margin: 1.5rem 0;
-    position: relative;
-}
-
-.auth-divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--border-color);
-}
-
-.auth-divider span {
-    background: white;
-    color: #666;
-    padding: 0 1rem;
-    font-size: 0.9rem;
-}
-
-.social-login {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.social-btn {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background: white;
-    color: var(--text-color);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.google-btn:hover {
-    border-color: #db4437;
-    background: #db4437;
-    color: white;
-}
-
-.facebook-btn:hover {
-    border-color: #4267B2;
-    background: #4267B2;
-    color: white;
-}
-
-.social-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--text-color);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-/* Auth Switch */
-.auth-switch {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.auth-switch a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.auth-switch a:hover {
-    text-decoration: underline;
-}
-
-/* Admin Auth Styles */
-.admin-auth {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px;
-}
-
-.admin-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.admin-header h2 {
-    color: white;
-    margin-bottom: 0.5rem;
-}
-
-.admin-header p {
-    opacity: 0.9;
-    font-size: 0.9rem;
-}
-
-.admin-help {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    font-size: 0.85rem;
-}
-
-.admin-help h4 {
-    margin-bottom: 0.5rem;
-    color: white;
-}
-
-.admin-help code {
-    background: rgba(255,255,255,0.2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-}
-
-/* Admin Login Screen */
-.admin-login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 2rem;
-}
-
-.admin-login-container {
-    width: 100%;
-    max-width: 500px;
-}
-
-.admin-login-card {
-    background: white;
-    border-radius: 16px;
-    padding: 3rem;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-.admin-logo {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.admin-logo h1 {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
-}
-
-.admin-logo p {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.admin-login-form .form-group {
-    margin-bottom: 1.5rem;
-}
-
-.admin-access-btn {
-    width: 100%;
-    padding: 16px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.admin-access-btn:hover {
-    transform: translateY(-2px);
-}
-
-.admin-info {
-    margin-top: 2rem;
-}
-
-.security-notice, .default-credentials {
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    border-radius: 8px;
-}
-
-.security-notice {
-    background: #e3f2fd;
-    border-left: 4px solid #2196F3;
-}
-
-.default-credentials {
-    background: #fff3e0;
-    border-left: 4px solid #ff9800;
-}
-
-.security-notice h4, .default-credentials h4 {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.security-notice ul {
-    margin: 0;
-    padding-left: 1.2rem;
-    font-size: 0.8rem;
-}
-
-.default-credentials code {
-    background: rgba(255,152,0,0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-}
-
-.back-to-store {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.back-to-store a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-/* Admin User Section */
-.admin-user-section {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.admin-user-info {
-    text-align: right;
-    color: white;
-}
-
-.admin-user-name {
-    display: block;
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.admin-login-time {
-    display: block;
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
-
-/* OTP Styles */
-.otp-container {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 2rem 0;
-}
-
-.otp-input {
-    width: 50px !important;
-    height: 50px;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-}
-
-.otp-input:focus {
-    border-color: var(--primary-color);
-}
-
-.otp-resend {
-    text-align: center;
-    margin-top: 1rem;
-}
-
-.countdown {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 0.5rem;
-}
-
-/* Account Modal */
-.account-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.account-tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 2rem;
-    gap: 0;
-}
-
-.tab-btn {
-    padding: 1rem 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    color: #666;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.tab-btn.active,
-.tab-btn:hover {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-.profile-form, .settings-form {
-    max-width: 500px;
-}
-
-.orders-list, .addresses-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.order-item, .address-item {
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.settings-section {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-}
-
-.settings-section h4 {
-    margin-bottom: 1rem;
-    color: var(--text-color);
-}
-
-.preference-item {
-    margin-bottom: 0.75rem;
-}
-
-.danger-zone {
-    border-color: #dc3545;
-    background: rgba(220,53,69,0.05);
-}
-
-/* Session Warning */
-.session-warning {
-    text-align: center;
-    padding: 2rem;
-}
-
-.session-warning h3 {
-    color: #ff6b35;
-    margin-bottom: 1rem;
-}
-
-.session-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1.5rem;
-}
-
-/* Settings Grid */
-.settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-}
-
-.settings-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 2rem;
-}
-
-.settings-card h3 {
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
-}
-
-.security-options, .data-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.data-actions button {
-    margin-bottom: 0.5rem;
-}
-
-/* Customer Table */
-.customers-table-container {
-    overflow-x: auto;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .auth-modal {
-        margin: 5% auto;
-        max-width: 95%;
+// Complete Authentication System (auth.js) - Fixed Version
+class AuthManager {
+constructor() {
+this.currentUser = null;
+this.adminUser = null;
+this.sessionTimeout = null;
+this.otpData = null;
+this.initializeAuth();
+}
+initializeAuth() {
+    this.loadSession();
+    this.setupEventListeners();
+    this.updateAuthUI();
+    
+    if (localStorage.getItem('mtechRememberMe') === 'true') {
+        this.autoLogin();
+    }
+
+    if (sessionStorage.getItem('mtechAdminSession')) {
+        this.loadAdminSession();
+    }
+
+    console.log('Authentication system initialized');
+}
+
+setupEventListeners() {
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const accountBtn = document.getElementById('accountBtn');
+    
+    if (loginBtn) loginBtn.addEventListener('click', () => this.showLoginModal());
+    if (registerBtn) registerBtn.addEventListener('click', () => this.showRegisterModal());
+    if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+    if (registerForm) registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+    if (logoutBtn) logoutBtn.addEventListener('click', () => this.logout());
+    if (accountBtn) accountBtn.addEventListener('click', () => this.showUserAccount());
+
+    const adminAccessForm = document.getElementById('adminAccessForm');
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    
+    if (adminAccessForm) adminAccessForm.addEventListener('submit', (e) => this.handleAdminLogin(e));
+    if (adminLoginForm) adminLoginForm.addEventListener('submit', (e) => this.handleAdminLogin(e));
+
+    const otpForm = document.getElementById('otpForm');
+    if (otpForm) otpForm.addEventListener('submit', (e) => this.handleOTPVerification(e));
+
+    const registerPassword = document.getElementById('registerPassword');
+    if (registerPassword) {
+        registerPassword.addEventListener('input', (e) => this.checkPasswordStrength(e.target.value));
+    }
+
+    this.setupOTPInputs();
+    this.setupAccountTabs();
+
+    window.addEventListener('click', (e) => this.handleModalClicks(e));
+}
+
+async handleLogin(e) {
+    e.preventDefault();
+    
+    const identifier = document.getElementById('loginIdentifier').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+
+    if (!identifier || !password) {
+        this.showToast('Please fill in all fields', 'error');
+        return;
+    }
+
+    try {
+        const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+        
+        const user = users.find(u => 
+            u.email === identifier || 
+            u.mobile === identifier ||
+            (u.mobile && u.mobile.includes(identifier))
+        );
+
+        if (!user) {
+            this.showToast('User not found', 'error');
+            return;
+        }
+
+        if (user.password !== this.hashPassword(password)) {
+            this.showToast('Invalid password', 'error');
+            return;
+        }
+
+        if (!user.verified) {
+            this.showToast('Please verify your account first', 'error');
+            this.sendOTP(user.mobile, 'verification');
+            return;
+        }
+
+        this.currentUser = user;
+        this.currentUser.lastLogin = new Date().toISOString();
+        
+        const userIndex = users.findIndex(u => u.id === user.id);
+        users[userIndex] = this.currentUser;
+        localStorage.setItem('mtechUsers', JSON.stringify(users));
+
+        this.setSession(rememberMe);
+        this.updateAuthUI();
+        this.closeLoginModal();
+        
+        this.showToast(`Welcome back, ${user.firstName}!`, 'success');
+        this.logUserActivity('login', 'User logged in successfully');
+
+    } catch (error) {
+        console.error('Login error:', error);
+        this.showToast('Login failed. Please try again.', 'error');
+    }
+}
+
+async handleRegister(e) {
+    e.preventDefault();
+    
+    const formData = {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        email: document.getElementById('registerEmail').value.trim().toLowerCase(),
+        mobile: document.getElementById('countryCode').value + document.getElementById('registerMobile').value.trim(),
+        password: document.getElementById('registerPassword').value,
+        confirmPassword: document.getElementById('confirmPassword').value,
+        agreeTerms: document.getElementById('agreeTerms').checked,
+        newsletter: document.getElementById('newsletter').checked
+    };
+
+    if (!this.validateRegistration(formData)) {
+        return;
+    }
+
+    try {
+        const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+        
+        if (users.find(u => u.email === formData.email)) {
+            this.showToast('Email already registered', 'error');
+            return;
+        }
+
+        if (users.find(u => u.mobile === formData.mobile)) {
+            this.showToast('Mobile number already registered', 'error');
+            return;
+        }
+
+        const newUser = {
+            id: Date.now(),
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            mobile: formData.mobile,
+            password: this.hashPassword(formData.password),
+            verified: false,
+            newsletter: formData.newsletter,
+            registrationDate: new Date().toISOString(),
+            addresses: [],
+            preferences: {
+                emailNotifications: true,
+                smsNotifications: true,
+                promotionalEmails: formData.newsletter
+            }
+        };
+
+        users.push(newUser);
+        localStorage.setItem('mtechUsers', JSON.stringify(users));
+
+        this.sendOTP(formData.mobile, 'registration', newUser);
+        
+        this.showToast('Registration successful! Please verify your mobile number.', 'success');
+        this.closeRegisterModal();
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        this.showToast('Registration failed. Please try again.', 'error');
+    }
+}
+
+validateRegistration(data) {
+    if (!data.firstName || !data.lastName) {
+        this.showToast('Please enter your full name', 'error');
+        return false;
+    }
+
+    if (!this.isValidEmail(data.email)) {
+        this.showToast('Please enter a valid email address', 'error');
+        return false;
+    }
+
+    if (!this.isValidMobile(data.mobile)) {
+        this.showToast('Please enter a valid mobile number', 'error');
+        return false;
+    }
+
+    if (data.password.length < 8) {
+        this.showToast('Password must be at least 8 characters long', 'error');
+        return false;
+    }
+
+    if (data.password !== data.confirmPassword) {
+        this.showToast('Passwords do not match', 'error');
+        return false;
+    }
+
+    if (!data.agreeTerms) {
+        this.showToast('Please agree to the Terms of Service', 'error');
+        return false;
+    }
+
+    return true;
+}
+
+async handleAdminLogin(e) {
+    e.preventDefault();
+    
+    let username, password, secretKey, remember;
+    
+    if (document.getElementById('adminUser')) {
+        username = document.getElementById('adminUser').value.trim();
+        password = document.getElementById('adminPass').value;
+        secretKey = document.getElementById('adminSecret').value.trim();
+        remember = document.getElementById('rememberDevice').checked;
+    } else {
+        username = document.getElementById('adminUsername').value.trim();
+        password = document.getElementById('adminPassword').value;
+        secretKey = document.getElementById('adminSecretKey').value.trim();
+        remember = document.getElementById('adminRemember').checked;
+    }
+
+    if (!username || !password) {
+        this.showToast('Please fill in all required fields', 'error');
+        return;
+    }
+
+    try {
+        const adminCreds = this.getAdminCredentials();
+        
+        if (username !== adminCreds.username) {
+            this.showToast('Invalid admin username', 'error');
+            this.logSecurityEvent('failed_admin_login', { username, ip: 'localhost' });
+            return;
+        }
+
+        if (password !== adminCreds.password) {
+            this.showToast('Invalid admin password', 'error');
+            this.logSecurityEvent('failed_admin_login', { username, ip: 'localhost' });
+            return;
+        }
+
+        if (adminCreds.requireSecretKey && secretKey !== adminCreds.secretKey) {
+            this.showToast('Invalid secret key', 'error');
+            this.logSecurityEvent('failed_admin_login', { username, reason: 'invalid_secret_key' });
+            return;
+        }
+
+        this.adminUser = {
+            username: username,
+            loginTime: new Date().toISOString(),
+            sessionId: this.generateSessionId()
+        };
+
+        this.setAdminSession(remember);
+        
+        if (window.location.pathname.includes('admin.html')) {
+            this.showAdminInterface();
+        } else {
+            window.location.href = 'admin.html';
+        }
+        
+        this.showToast('Admin login successful', 'success');
+        this.logSecurityEvent('admin_login_success', { username });
+
+    } catch (error) {
+        console.error('Admin login error:', error);
+        this.showToast('Admin login failed. Please try again.', 'error');
+    }
+}
+
+getAdminCredentials() {
+    const defaultCreds = {
+        username: 'admin',
+        password: 'MTech@123',
+        secretKey: 'SecureKey2025',
+        requireSecretKey: false
+    };
+
+    const savedCreds = localStorage.getItem('mtechAdminCredentials');
+    return savedCreds ? JSON.parse(savedCreds) : defaultCreds;
+}
+
+setAdminSession(remember = false) {
+    const sessionData = {
+        adminUser: this.adminUser,
+        timestamp: Date.now(),
+        remember: remember
+    };
+
+    sessionStorage.setItem('mtechAdminSession', JSON.stringify(sessionData));
+    
+    if (remember) {
+        localStorage.setItem('mtechAdminRemember', JSON.stringify({
+            username: this.adminUser.username,
+            expires: Date.now() + (7 * 24 * 60 * 60 * 1000)
+        }));
+    }
+
+    this.setAdminTimeout();
+}
+
+showAdminInterface() {
+    const loginScreen = document.getElementById('adminLoginScreen');
+    const adminInterface = document.getElementById('adminInterface');
+    
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (adminInterface) adminInterface.style.display = 'block';
+    
+    const adminUserName = document.getElementById('adminUserName');
+    const adminLoginTime = document.getElementById('adminLoginTime');
+    
+    if (adminUserName) adminUserName.textContent = this.adminUser.username;
+    if (adminLoginTime) adminLoginTime.textContent = `Logged in: ${new Date(this.adminUser.loginTime).toLocaleString()}`;
+}
+
+adminLogout() {
+    sessionStorage.removeItem('mtechAdminSession');
+    localStorage.removeItem('mtechAdminRemember');
+    
+    if (this.sessionTimeout) {
+        clearTimeout(this.sessionTimeout);
+    }
+
+    this.adminUser = null;
+    
+    if (window.location.pathname.includes('admin.html')) {
+        const loginScreen = document.getElementById('adminLoginScreen');
+        const adminInterface = document.getElementById('adminInterface');
+        
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (adminInterface) adminInterface.style.display = 'none';
+    } else {
+        window.location.href = 'customer.html';
     }
     
-    .auth-container {
-        padding: 1.5rem;
-    }
+    this.showToast('Admin logged out successfully', 'success');
+}
+
+sendOTP(mobile, type, userData = null) {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+    this.otpData = {
+        otp: otp,
+        mobile: mobile,
+        type: type,
+        userData: userData,
+        timestamp: Date.now(),
+        attempts: 0
+    };
+
+    console.log(`OTP for ${mobile}: ${otp}`);
     
-    .form-options {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    this.showOtpModal(mobile, type);
     
-    .social-login {
-        gap: 0.5rem;
-    }
+    setTimeout(() => {
+        alert(`Demo OTP for ${mobile}: ${otp}`);
+    }, 1000);
     
-    .admin-login-card {
-        padding: 2rem;
-    }
+    this.startOTPCountdown();
+}
+
+handleOTPVerification(e) {
+    e.preventDefault();
     
-    .admin-user-section {
-        flex-direction: column;
-        gap: 1rem;
+    if (!this.otpData) {
+        this.showToast('OTP session expired. Please request a new OTP.', 'error');
+        return;
     }
-    
-    .admin-user-info {
-        text-align: center;
+
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+
+    if (enteredOTP.length !== 6) {
+        this.showToast('Please enter complete OTP', 'error');
+        return;
     }
-    
-    .account-tabs {
-        flex-wrap: wrap;
+
+    this.otpData.attempts++;
+    if (this.otpData.attempts > 3) {
+        this.showToast('Too many failed attempts. Please request a new OTP.', 'error');
+        this.otpData = null;
+        this.closeOtpModal();
+        return;
     }
-    
-    .tab-btn {
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
+
+    if (enteredOTP !== this.otpData.otp) {
+        this.showToast(`Invalid OTP. ${4 - this.otpData.attempts} attempts remaining.`, 'error');
+        this.shakeOTPInputs();
+        return;
     }
+
+    this.handleOTPSuccess();
+}
+
+handleOTPSuccess() {
+    const { type, userData } = this.otpData;
     
-    .settings-grid {
-        grid-template-columns: 1fr;
+    if (type === 'registration' && userData) {
+        const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+        const userIndex = users.findIndex(u => u.id === userData.id);
+        
+        if (userIndex !== -1) {
+            users[userIndex].verified = true;
+            localStorage.setItem('mtechUsers', JSON.stringify(users));
+            
+            this.showToast('Mobile number verified! You can now login.', 'success');
+        }
+    } else if (type === 'verification') {
+        this.showToast('Account verified successfully!', 'success');
+    } else if (type === 'reset') {
+        this.showPasswordResetForm();
+        return;
     }
+
+    this.otpData = null;
+    this.closeOtpModal();
+}
+
+startOTPCountdown() {
+    let timeLeft = 300;
+    const countdownElement = document.getElementById('otpCountdown');
     
-    .otp-container {
-        gap: 0.25rem;
-    }
-    
-    .otp-input {
-        width: 40px !important;
-        height: 40px;
-        font-size: 1.2rem;
+    const countdown = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        
+        if (countdownElement) {
+            countdownElement.textContent = `Resend OTP in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            if (countdownElement) {
+                countdownElement.innerHTML = '<a href="#" onclick="authManager.resendOTP()">Resend OTP</a>';
+            }
+        }
+        
+        timeLeft--;
+    }, 1000);
+}
+
+resendOTP() {
+    if (this.otpData) {
+        this.sendOTP(this.otpData.mobile, this.otpData.type, this.otpData.userData);
+        this.showToast('OTP resent successfully', 'success');
     }
 }
 
-@media (max-width: 480px) {
-    .auth-buttons {
-        gap: 0.25rem;
+setSession(rememberMe = false) {
+    const sessionData = {
+        user: this.currentUser,
+        timestamp: Date.now()
+    };
+
+    sessionStorage.setItem('mtechUserSession', JSON.stringify(sessionData));
+    
+    if (rememberMe) {
+        localStorage.setItem('mtechRememberMe', 'true');
+        localStorage.setItem('mtechUserRemember', JSON.stringify({
+            userId: this.currentUser.id,
+            expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+        }));
+    }
+}
+
+loadSession() {
+    const sessionData = sessionStorage.getItem('mtechUserSession');
+    if (sessionData) {
+        const { user, timestamp } = JSON.parse(sessionData);
+        
+        if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+            this.currentUser = user;
+            return true;
+        } else {
+            this.clearSession();
+        }
+    }
+    return false;
+}
+
+autoLogin() {
+    const rememberData = localStorage.getItem('mtechUserRemember');
+    if (rememberData) {
+        const { userId, expires } = JSON.parse(rememberData);
+        
+        if (Date.now() < expires) {
+            const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+            const user = users.find(u => u.id === userId);
+            
+            if (user) {
+                this.currentUser = user;
+                this.setSession(true);
+                return true;
+            }
+        } else {
+            localStorage.removeItem('mtechUserRemember');
+            localStorage.removeItem('mtechRememberMe');
+        }
+    }
+    return false;
+}
+
+loadAdminSession() {
+    const sessionData = sessionStorage.getItem('mtechAdminSession');
+    if (sessionData) {
+        const { adminUser, timestamp } = JSON.parse(sessionData);
+        
+        if (Date.now() - timestamp < 30 * 60 * 1000) {
+            this.adminUser = adminUser;
+            if (window.location.pathname.includes('admin.html')) {
+                this.showAdminInterface();
+            }
+            this.setAdminTimeout();
+            return true;
+        } else {
+            this.clearAdminSession();
+        }
     }
     
-    .login-btn, .register-btn {
-        padding: 6px 12px;
-        font-size: 0.8rem;
+    const rememberData = localStorage.getItem('mtechAdminRemember');
+    if (rememberData) {
+        const { username, expires } = JSON.parse(rememberData);
+        
+        if (Date.now() < expires) {
+            this.adminUser = {
+                username: username,
+                loginTime: new Date().toISOString(),
+                sessionId: this.generateSessionId()
+            };
+            this.setAdminSession(true);
+            return true;
+        } else {
+            localStorage.removeItem('mtechAdminRemember');
+        }
     }
     
-    .user-dropdown {
-        min-width: 200px;
-        right: -50px;
+    return false;
+}
+
+setAdminTimeout() {
+    if (this.sessionTimeout) {
+        clearTimeout(this.sessionTimeout);
+    }
+
+    const warningTimeout = setTimeout(() => {
+        this.showSessionWarning();
+    }, 25 * 60 * 1000);
+
+    this.sessionTimeout = setTimeout(() => {
+        this.adminLogout();
+        this.showToast('Session expired for security', 'error');
+    }, 30 * 60 * 1000);
+}
+
+showSessionWarning() {
+    const modal = document.getElementById('sessionWarningModal');
+    if (modal) {
+        modal.style.display = 'block';
+        
+        let timeLeft = 5 * 60;
+        const countdown = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            const countdownElement = document.getElementById('sessionCountdown');
+            if (countdownElement) {
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                modal.style.display = 'none';
+            }
+            
+            timeLeft--;
+        }, 1000);
     }
 }
 
-/* Animation Classes */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
+extendSession() {
+    this.setAdminSession(false);
+    const modal = document.getElementById('sessionWarningModal');
+    if (modal) modal.style.display = 'none';
+    this.showToast('Session extended successfully', 'success');
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+clearSession() {
+    sessionStorage.removeItem('mtechUserSession');
+    this.currentUser = null;
 }
 
-.shake {
-    animation: shake 0.5s ease-in-out;
+clearAdminSession() {
+    sessionStorage.removeItem('mtechAdminSession');
+    this.adminUser = null;
+    if (this.sessionTimeout) {
+        clearTimeout(this.sessionTimeout);
+    }
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+updateAuthUI() {
+    const authButtons = document.getElementById('authButtons');
+    const userMenu = document.getElementById('userMenu');
+    const userWelcome = document.getElementById('userWelcome');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+
+    if (this.currentUser) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        if (userWelcome) userWelcome.textContent = `Hi, ${this.currentUser.firstName}`;
+        if (userName) userName.textContent = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+        if (userEmail) userEmail.textContent = this.currentUser.email;
+    } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
 }
 
-/* Success/Error Messages */
-.success-toast {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+showLoginModal() {
+    document.getElementById('loginModal').style.display = 'block';
+    this.closeRegisterModal();
 }
 
-.error-toast {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+    this.resetForm('loginForm');
 }
 
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    z-index: 10000;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: slideIn 0.3s ease-out;
+showRegisterModal() {
+    document.getElementById('registerModal').style.display = 'block';
+    this.closeLoginModal();
 }
 
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+closeRegisterModal() {
+    document.getElementById('registerModal').style.display = 'none';
+    this.resetForm('registerForm');
+}
+
+showAdminLogin() {
+    const modal = document.getElementById('adminLoginModal');
+    if (modal) {
+        modal.style.display = 'block';
+    } else {
+        window.location.href = 'admin.html';
+    }
+}
+
+closeAdminLoginModal() {
+    const modal = document.getElementById('adminLoginModal');
+    if (modal) {
+        modal.style.display = 'none';
+        this.resetForm('adminLoginForm');
+    }
+}
+
+showOtpModal(mobile, type) {
+    const modal = document.getElementById('otpModal');
+    const message = document.getElementById('otpMessage');
+    
+    if (modal && message) {
+        const maskedMobile = mobile.replace(/(\d{2})\d+(\d{2})/, '$1****$2');
+        message.textContent = `Enter the 6-digit code sent to ${maskedMobile}`;
+        modal.style.display = 'block';
+    }
+}
+
+closeOtpModal() {
+    const modal = document.getElementById('otpModal');
+    if (modal) {
+        modal.style.display = 'none';
+        this.resetOTPInputs();
+    }
+}
+
+showUserAccount() {
+    const modal = document.getElementById('userAccountModal');
+    if (modal) {
+        this.loadUserAccountData();
+        modal.style.display = 'block';
+    }
+}
+
+closeUserAccountModal() {
+    const modal = document.getElementById('userAccountModal');
+    if (modal) modal.style.display = 'none';
+}
+
+showForgotPassword() {
+    document.getElementById('forgotPasswordModal').style.display = 'block';
+    this.closeLoginModal();
+}
+
+closeForgotPasswordModal() {
+    document.getElementById('forgotPasswordModal').style.display = 'none';
+}
+
+handleModalClicks(e) {
+    const modals = [
+        'loginModal', 'registerModal', 'adminLoginModal', 
+        'otpModal', 'userAccountModal', 'forgotPasswordModal'
+    ];
+    
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal && e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const button = input.parentElement.querySelector('.toggle-password');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (button) button.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        if (button) button.textContent = '👁️';
+    }
+}
+
+checkPasswordStrength(password) {
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    
+    if (!strengthBar || !strengthText) return;
+    
+    let strength = 0;
+    let text = 'Weak';
+    
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    
+    strengthBar.className = 'strength-bar';
+    
+    if (strength >= 4) {
+        strengthBar.classList.add('strong');
+        text = 'Strong';
+    } else if (strength >= 2) {
+        strengthBar.classList.add('medium');
+        text = 'Medium';
+    } else {
+        strengthBar.classList.add('weak');
+        text = 'Weak';
+    }
+    
+    strengthText.textContent = `Password strength: ${text}`;
+}
+
+setupOTPInputs() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+}
+
+resetOTPInputs() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    otpInputs.forEach(input => input.value = '');
+    if (otpInputs.length > 0) otpInputs[0].focus();
+}
+
+shakeOTPInputs() {
+    const container = document.querySelector('.otp-container');
+    if (container) {
+        container.classList.add('shake');
+        setTimeout(() => container.classList.remove('shake'), 500);
+    }
+}
+
+setupAccountTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+            
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            tabPanels.forEach(panel => {
+                panel.classList.remove('active');
+                if (panel.id === targetTab) {
+                    panel.classList.add('active');
+                }
+            });
+            
+            this.loadTabContent(targetTab);
+        });
+    });
+}
+
+loadTabContent(tabId) {
+    switch(tabId) {
+        case 'orders':
+            this.loadUserOrders();
+            break;
+        case 'addresses':
+            this.loadUserAddresses();
+            break;
+        default:
+            break;
+    }
+}
+
+loadUserAccountData() {
+    if (!this.currentUser) return;
+    
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        document.getElementById('profileFirstName').value = this.currentUser.firstName || '';
+        document.getElementById('profileLastName').value = this.currentUser.lastName || '';
+        document.getElementById('profileEmail').value = this.currentUser.email || '';
+        document.getElementById('profileMobile').value = this.currentUser.mobile || '';
+    }
+    
+    if (this.currentUser.preferences) {
+        const prefs = this.currentUser.preferences;
+        const emailNotifications = document.getElementById('emailNotifications');
+        const smsNotifications = document.getElementById('smsNotifications');
+        const promotionalEmails = document.getElementById('promotionalEmails');
+        
+        if (emailNotifications) emailNotifications.checked = prefs.emailNotifications;
+        if (smsNotifications) smsNotifications.checked = prefs.smsNotifications;
+        if (promotionalEmails) promotionalEmails.checked = prefs.promotionalEmails;
+    }
+}
+
+loadUserOrders() {
+    if (!this.currentUser) return;
+    
+    const orders = JSON.parse(localStorage.getItem('mtechOrders')) || [];
+    const userOrders = orders.filter(order => 
+        order.customer.email === this.currentUser.email
+    );
+    
+    const ordersList = document.getElementById('userOrdersList');
+    if (ordersList) {
+        if (userOrders.length === 0) {
+            ordersList.innerHTML = '<p>No orders found. Start shopping!</p>';
+        } else {
+            ordersList.innerHTML = userOrders.map(order => `
+                <div class="order-item">
+                    <div class="order-header">
+                        <h4>Order #${order.orderId}</h4>
+                        <span class="order-total">$${order.total.toFixed(2)}</span>
+                    </div>
+                    <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleDateString()}</p>
+                    <p><strong>Status:</strong> Processing</p>
+                    <p><strong>Items:</strong> ${order.items.length} item(s)</p>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+resetForm(formId) {
+    const form = document.getElementById(formId);
+    if (form) form.reset();
+}
+
+isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+isValidMobile(mobile) {
+    const mobileRegex = /^\+\d{1,3}\d{7,14}$/;
+    return mobileRegex.test(mobile);
+}
+
+hashPassword(password) {
+    return btoa(password + 'mtech_salt_2025');
+}
+
+generateSessionId() {
+    return Math.random().toString(36).substring(2, 15) + 
+           Math.random().toString(36).substring(2, 15);
+}
+
+showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}-toast`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 9999;
+        padding: 1rem 2rem; border-radius: 6px; font-weight: 500;
+        ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;'}
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
+}
+
+logUserActivity(action, details) {
+    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+    
+    activities.unshift({
+        userId: this.currentUser?.id,
+        action: action,
+        details: details,
+        timestamp: new Date().toISOString(),
+        ip: 'localhost'
+    });
+    
+    if (activities.length > 100) {
+        activities.splice(100);
+    }
+    
+    localStorage.setItem('mtechUserActivities', JSON.stringify(activities));
+}
+
+logSecurityEvent(event, data) {
+    const securityLogs = JSON.parse(localStorage.getItem('mtechSecurityLogs')) || [];
+    
+    securityLogs.unshift({
+        event: event,
+        data: data,
+        timestamp: new Date().toISOString()
+    });
+    
+    if (securityLogs.length > 50) {
+        securityLogs.splice(50);
+    }
+    
+    localStorage.setItem('mtechSecurityLogs', JSON.stringify(securityLogs));
+}
+
+logout() {
+    this.currentUser = null;
+    this.clearSession();
+    localStorage.removeItem('mtechRememberMe');
+    localStorage.removeItem('mtechUserRemember');
+    
+    this.updateAuthUI();
+    this.showToast('Logged out successfully', 'success');
+    
+    const modal = document.getElementById('userAccountModal');
+    if (modal && modal.style.display === 'block') {
+        this.closeUserAccountModal();
+    }
+}
+
+loginWithGoogle() {
+    this.showToast('Google login integration required', 'error');
+}
+
+loginWithFacebook() {
+    this.showToast('Facebook login integration required', 'error');
+}
+
+registerWithGoogle() {
+    this.showToast('Google registration integration required', 'error');
+}
+
+registerWithFacebook() {
+    this.showToast('Facebook registration integration required', 'error');
+}
+
+}
+let authManager;
+document.addEventListener('DOMContentLoaded', function() {
+authManager = new AuthManager();
+window.showAdminLogin = () => authManager.showAdminLogin();
+window.showLoginModal = () => authManager.showLoginModal();
+window.showRegisterModal = () => authManager.showRegisterModal();
+window.closeLoginModal = () => authManager.closeLoginModal();
+window.closeRegisterModal = () => authManager.closeRegisterModal();
+window.closeAdminLoginModal = () => authManager.closeAdminLoginModal();
+window.closeOtpModal = () => authManager.closeOtpModal();
+window.closeUserAccountModal = () => authManager.closeUserAccountModal();
+window.closeForgotPasswordModal = () => authManager.closeForgotPasswordModal();
+window.showForgotPassword = () => authManager.showForgotPassword();
+window.togglePassword = (id) => authManager.togglePassword(id);
+window.resendOTP = () => authManager.resendOTP();
+window.extendSession = () => authManager.extendSession();
+window.adminLogout = () => authManager.adminLogout();
+window.loginWithGoogle = () => authManager.loginWithGoogle();
+window.loginWithFacebook = () => authManager.loginWithFacebook();
+window.registerWithGoogle = () => authManager.registerWithGoogle();
+window.registerWithFacebook = () => authManager.registerWithFacebook();
+
+});
+if (typeof module !== 'undefined' && module.exports) {
+module.exports = AuthManager;
 }
