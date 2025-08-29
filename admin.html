@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTech Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body" id="adminBody">
+    
+    <!-- Admin Login Screen (shown before authentication) -->
+    <div class="admin-login-screen" id="adminLoginScreen">
+        <div class="admin-login-container">
+            <div class="admin-login-card">
+                <div class="admin-logo">
+                    <h1>MTech Admin Panel</h1>
+                    <p>Secure Access Portal</p>
+                </div>
+                
+                <form class="admin-login-form" id="adminAccessForm">
+                    <div class="form-group">
+                        <label for="adminUser">Username</label>
+                        <input type="text" id="adminUser" placeholder="Enter admin username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminPass">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="adminPass" placeholder="Enter admin password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('adminPass')">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminSecret">Secret Key (Optional)</label>
+                        <input type="password" id="adminSecret" placeholder="Enter secret key for enhanced security">
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberDevice">
+                            <span>Remember this device for 7 days</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="admin-access-btn">Access Admin Panel</button>
+                </form>
+                
+                <div class="admin-info">
+                    <div class="security-notice">
+                        <h4>🔒 Security Notice</h4>
+                        <ul>
+                            <li>Admin access is logged and monitored</li>
+                            <li>Use strong credentials for security</li>
+                            <li>Never share admin credentials</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="default-credentials">
+                        <h4>Default Credentials (Change After First Login)</h4>
+                        <p><strong>Username:</strong> <code>admin</code></p>
+                        <p><strong>Password:</strong> <code>MTech@123</code></p>
+                        <p><strong>Secret Key:</strong> <code>SecureKey2025</code> (optional)</p>
+                    </div>
+                </div>
+                
+                <div class="back-to-store">
+                    <a href="customer.html">← Back to Customer Store</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Interface (shown after authentication) -->
+    <div class="admin-interface" id="adminInterface" style="display: none;">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="container">
+                <div class="admin-header-content">
+                    <div class="admin-logo">
+                        <h1>MTech Admin Panel</h1>
+                        <span>Product & Inventory Management</span>
+                    </div>
+                    <div class="admin-user-section">
+                        <div class="admin-user-info">
+                            <span class="admin-user-name" id="adminUserName">Admin User</span>
+                            <span class="admin-login-time" id="adminLoginTime"></span>
+                        </div>
+                        <div class="admin-actions">
+                            <a href="customer.html" class="customer-link">View Customer Site</a>
+                            <button class="admin-btn" onclick="exportData()">Export Data</button>
+                            <button class="admin-btn danger" onclick="adminLogout()">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <div class="container">
+                <ul class="admin-nav-list">
+                    <li><a href="#" class="admin-nav-link active" data-section="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="products">Products</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="categories">Categories</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="orders">Orders</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="customers">Customers</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="add-product">Add Product</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="settings">Settings</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Admin Main Content -->
+        <main class="admin-main">
+            <div class="container">
+                
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="admin-section active">
+                    <h2>Dashboard Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Products</h3>
+                            <div class="stat-number" id="totalProducts">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Categories</h3>
+                            <div class="stat-number" id="totalCategories">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Customers</h3>
+                            <div class="stat-number" id="totalCustomers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Orders</h3>
+                            <div class="stat-number" id="totalOrders">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="recentActivity" class="activity-list"></div>
+                    </div>
+                </section>
+
+                <!-- Products Section -->
+                <section id="products" class="admin-section">
+                    <div class="section-header">
+                        <h2>Products Management</h2>
+                        <button class="admin-btn" onclick="showAddProduct()">Add New Product</button>
+                    </div>
+                    <div class="products-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Featured</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Categories Section -->
+                <section id="categories" class="admin-section">
+                    <div class="section-header">
+                        <h2>Categories Management</h2>
+                        <button class="admin-btn" onclick="showAddCategory()">Add New Category</button>
+                    </div>
+                    <div class="categories-grid" id="adminCategoriesGrid"></div>
+                </section>
+
+                <!-- Orders Section -->
+                <section id="orders" class="admin-section">
+                    <h2>Orders Management</h2>
+                    <div class="orders-container" id="ordersContainer"></div>
+                </section>
+
+                <!-- Customers Section (NEW) -->
+                <section id="customers" class="admin-section">
+                    <h2>Customer Management</h2>
+                    <div class="customers-container">
+                        <div class="customers-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Registration Date</th>
+                                        <th>Orders</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Add Product Section -->
+                <section id="add-product" class="admin-section">
+                    <h2>Add New Product</h2>
+                    <!-- Keep existing add product form -->
+                    <form class="add-product-form" id="addProductForm">
+                        <!-- ... existing form fields ... -->
+                    </form>
+                </section>
+
+                <!-- Settings Section (NEW) -->
+                <section id="settings" class="admin-section">
+                    <h2>Admin Settings</h2>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Change Admin Credentials</h3>
+                            <form class="settings-form" id="adminCredentialsForm">
+                                <div class="form-group">
+                                    <label for="currentAdminPassword">Current Password</label>
+                                    <input type="password" id="currentAdminPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newAdminUsername">New Username</label>
+                                    <input type="text" id="newAdminUsername" placeholder="Leave blank to keep current">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newAdminPassword">New Password</label>
+                                    <input type="password" id="newAdminPassword" placeholder="Leave blank to keep current">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newSecretKey">New Secret Key</label>
+                                    <input type="password" id="newSecretKey" placeholder="Leave blank to keep current">
+                                </div>
+                                <button type="submit" class="admin-btn">Update Credentials</button>
+                            </form>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Security Settings</h3>
+                            <div class="security-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="requireSecretKey">
+                                    <span>Require secret key for login</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableSessionTimeout">
+                                    <span>Auto-logout after 30 minutes</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="logAdminActions">
+                                    <span>Log all admin actions</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Data Management</h3>
+                            <div class="data-actions">
+                                <button class="admin-btn" onclick="exportAllData()">Export All Data</button>
+                                <button class="admin-btn secondary" onclick="importData()">Import Data</button>
+                                <button class="admin-btn danger" onclick="clearAllData()">Clear All Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Session Warning Modal -->
+    <div class="modal" id="sessionWarningModal">
+        <div class="modal-content">
+            <div class="session-warning">
+                <h3>⚠️ Session Expiring</h3>
+                <p>Your admin session will expire in <span id="sessionCountdown">5:00</span></p>
+                <div class="session-actions">
+                    <button class="admin-btn" onclick="extendSession()">Extend Session</button>
+                    <button class="admin-btn secondary" onclick="adminLogout()">Logout Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
