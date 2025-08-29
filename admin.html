@@ -210,14 +210,472 @@
                 </section>
 
                 <!-- Add Product Section -->
-                <section id="add-product" class="admin-section">
-                    <h2>Add New Product</h2>
-                    <!-- Keep existing add product form -->
-                    <form class="add-product-form" id="addProductForm">
-                        <!-- ... existing form fields ... -->
-                    </form>
-                </section>
+               <!-- Enhanced Add Product Section for Admin Panel -->
 
+<section id="add-product" class="admin-section">
+    <div class="section-header">
+        <h2>Add New Product</h2>
+        <div class="form-actions-header">
+            <button type="button" class="admin-btn secondary" onclick="resetForm()">Clear Form</button>
+            <button type="button" class="admin-btn" onclick="previewProduct()">Preview Product</button>
+        </div>
+    </div>
+
+    <form class="enhanced-product-form" id="addProductForm">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">📝</span>
+                Basic Information
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productName">Product Name *</label>
+                    <input type="text" id="productName" placeholder="e.g., iPhone 15 Pro Max" required>
+                    <small class="field-hint">Enter the full product name as it will appear to customers</small>
+                </div>
+                <div class="form-group">
+                    <label for="productBrand">Brand *</label>
+                    <input type="text" id="productBrand" placeholder="e.g., Apple" required>
+                    <small class="field-hint">Manufacturer or brand name</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productModel">Model Number</label>
+                    <input type="text" id="productModel" placeholder="e.g., A2848">
+                    <small class="field-hint">Official model/part number</small>
+                </div>
+                <div class="form-group">
+                    <label for="productSKU">SKU (Stock Keeping Unit)</label>
+                    <input type="text" id="productSKU" placeholder="e.g., MT-IP15PM-256-TB">
+                    <small class="field-hint">Internal product identifier</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category & Classification -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">📂</span>
+                Category & Classification
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productCategory">Primary Category *</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Primary Category</option>
+                    </select>
+                    <small class="field-hint">Main product category</small>
+                </div>
+                <div class="form-group">
+                    <label for="productSubCategory">Sub Category</label>
+                    <input type="text" id="productSubCategory" placeholder="e.g., Flagship Smartphones">
+                    <small class="field-hint">More specific categorization</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productTags">Tags</label>
+                    <input type="text" id="productTags" placeholder="e.g., 5G, Premium, Latest, iOS">
+                    <small class="field-hint">Comma-separated keywords for search</small>
+                </div>
+                <div class="form-group">
+                    <label for="productCondition">Condition</label>
+                    <select id="productCondition">
+                        <option value="new">New</option>
+                        <option value="refurbished">Refurbished</option>
+                        <option value="used">Used</option>
+                        <option value="open-box">Open Box</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">📄</span>
+                Product Description
+            </h3>
+            
+            <div class="form-group full-width">
+                <label for="productShortDescription">Short Description *</label>
+                <textarea id="productShortDescription" rows="2" maxlength="200" placeholder="Brief, compelling product summary (max 200 characters)" required></textarea>
+                <div class="char-counter">
+                    <span id="shortDescCounter">0</span>/200 characters
+                </div>
+                <small class="field-hint">This appears in product cards and search results</small>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="productDescription">Detailed Description *</label>
+                <div class="description-toolbar">
+                    <button type="button" class="format-btn" onclick="formatText('bold')"><strong>B</strong></button>
+                    <button type="button" class="format-btn" onclick="formatText('italic')"><em>I</em></button>
+                    <button type="button" class="format-btn" onclick="formatText('list')">• List</button>
+                    <button type="button" class="format-btn" onclick="addTemplate('features')">Features Template</button>
+                </div>
+                <textarea id="productDescription" rows="8" placeholder="Detailed product description with features, benefits, and specifications..." required></textarea>
+                <small class="field-hint">Comprehensive product information for the product page</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productHighlights">Key Highlights</label>
+                    <textarea id="productHighlights" rows="4" placeholder="• Advanced A17 Pro chip&#10;• Professional camera system&#10;• Titanium design&#10;• All-day battery life"></textarea>
+                    <small class="field-hint">Bullet points of main features (one per line)</small>
+                </div>
+                <div class="form-group">
+                    <label for="productWarranty">Warranty Information</label>
+                    <textarea id="productWarranty" rows="4" placeholder="1 Year Limited Warranty&#10;Extended warranty available&#10;International warranty coverage"></textarea>
+                    <small class="field-hint">Warranty terms and coverage details</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Technical Specifications
+            </h3>
+            
+            <div class="specifications-container">
+                <div class="spec-categories">
+                    <button type="button" class="spec-category-btn active" data-category="general">General</button>
+                    <button type="button" class="spec-category-btn" data-category="display">Display</button>
+                    <button type="button" class="spec-category-btn" data-category="performance">Performance</button>
+                    <button type="button" class="spec-category-btn" data-category="connectivity">Connectivity</button>
+                    <button type="button" class="spec-category-btn" data-category="physical">Physical</button>
+                </div>
+
+                <div class="spec-panels">
+                    <div class="spec-panel active" id="general-specs">
+                        <h4>General Specifications</h4>
+                        <div class="spec-grid">
+                            <div class="spec-row">
+                                <input type="text" placeholder="Operating System" class="spec-name">
+                                <input type="text" placeholder="iOS 17" class="spec-value">
+                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSpecificationToCategory('general')" class="add-spec-btn">+ Add General Spec</button>
+                    </div>
+
+                    <div class="spec-panel" id="display-specs">
+                        <h4>Display Specifications</h4>
+                        <div class="spec-grid">
+                            <div class="spec-row">
+                                <input type="text" placeholder="Screen Size" class="spec-name">
+                                <input type="text" placeholder="6.7 inches" class="spec-value">
+                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSpecificationToCategory('display')" class="add-spec-btn">+ Add Display Spec</button>
+                    </div>
+
+                    <div class="spec-panel" id="performance-specs">
+                        <h4>Performance Specifications</h4>
+                        <div class="spec-grid">
+                            <div class="spec-row">
+                                <input type="text" placeholder="Processor" class="spec-name">
+                                <input type="text" placeholder="A17 Pro chip" class="spec-value">
+                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSpecificationToCategory('performance')" class="add-spec-btn">+ Add Performance Spec</button>
+                    </div>
+
+                    <div class="spec-panel" id="connectivity-specs">
+                        <h4>Connectivity Specifications</h4>
+                        <div class="spec-grid">
+                            <div class="spec-row">
+                                <input type="text" placeholder="Network" class="spec-name">
+                                <input type="text" placeholder="5G, 4G LTE" class="spec-value">
+                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSpecificationToCategory('connectivity')" class="add-spec-btn">+ Add Connectivity Spec</button>
+                    </div>
+
+                    <div class="spec-panel" id="physical-specs">
+                        <h4>Physical Specifications</h4>
+                        <div class="spec-grid">
+                            <div class="spec-row">
+                                <input type="text" placeholder="Dimensions" class="spec-name">
+                                <input type="text" placeholder="159.9 x 76.7 x 8.25 mm" class="spec-value">
+                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSpecificationToCategory('physical')" class="add-spec-btn">+ Add Physical Spec</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images & Media -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">🖼️</span>
+                Images & Media
+            </h3>
+            
+            <div class="image-upload-section">
+                <div class="form-group">
+                    <label for="productMainImage">Main Product Image *</label>
+                    <div class="image-upload-container">
+                        <input type="url" id="productMainImage" placeholder="https://example.com/product-image.jpg" required>
+                        <button type="button" class="upload-btn" onclick="uploadImage('main')">Upload</button>
+                    </div>
+                    <div class="image-preview" id="mainImagePreview"></div>
+                    <small class="field-hint">Primary product image (recommended: 800x800px, JPG/PNG)</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional Images</label>
+                    <div class="additional-images" id="additionalImages">
+                        <div class="image-input-row">
+                            <input type="url" placeholder="Image URL" class="additional-image-url">
+                            <button type="button" onclick="addImageRow()" class="add-btn">+</button>
+                            <button type="button" onclick="removeImageRow(this)" class="remove-btn">×</button>
+                        </div>
+                    </div>
+                    <small class="field-hint">Additional product images (up to 8 images)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="productVideo">Product Video URL</label>
+                    <input type="url" id="productVideo" placeholder="https://youtube.com/watch?v=...">
+                    <small class="field-hint">YouTube or Vimeo video URL (optional)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing & Inventory -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">💰</span>
+                Pricing & Inventory
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productPrice">Selling Price ($) *</label>
+                    <input type="number" id="productPrice" min="0" step="0.01" placeholder="1199.99" required>
+                    <small class="field-hint">Current selling price</small>
+                </div>
+                <div class="form-group">
+                    <label for="productOriginalPrice">Original Price ($)</label>
+                    <input type="number" id="productOriginalPrice" min="0" step="0.01" placeholder="1299.99">
+                    <small class="field-hint">Original/MSRP price (for discount calculation)</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productCostPrice">Cost Price ($)</label>
+                    <input type="number" id="productCostPrice" min="0" step="0.01" placeholder="900.00">
+                    <small class="field-hint">Your cost/wholesale price (internal use)</small>
+                </div>
+                <div class="form-group">
+                    <label for="productStock">Stock Quantity</label>
+                    <input type="number" id="productStock" min="0" value="10">
+                    <small class="field-hint">Available inventory count</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productMinStock">Minimum Stock Alert</label>
+                    <input type="number" id="productMinStock" min="0" value="5">
+                    <small class="field-hint">Alert when stock falls below this number</small>
+                </div>
+                <div class="form-group">
+                    <label for="productStockStatus">Stock Status</label>
+                    <select id="productStockStatus">
+                        <option value="in-stock">In Stock</option>
+                        <option value="low-stock">Low Stock</option>
+                        <option value="out-of-stock">Out of Stock</option>
+                        <option value="pre-order">Pre-Order</option>
+                        <option value="discontinued">Discontinued</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Variants -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">🔄</span>
+                Product Variants (Optional)
+            </h3>
+            
+            <div class="variants-container">
+                <div class="variant-type-selector">
+                    <label>
+                        <input type="checkbox" id="hasColorVariants"> Color Variants
+                    </label>
+                    <label>
+                        <input type="checkbox" id="hasSizeVariants"> Size/Storage Variants
+                    </label>
+                    <label>
+                        <input type="checkbox" id="hasCustomVariants"> Custom Variants
+                    </label>
+                </div>
+
+                <div class="variants-details" id="variantsDetails" style="display: none;">
+                    <div class="variant-section" id="colorVariants" style="display: none;">
+                        <h4>Color Options</h4>
+                        <div class="color-variants">
+                            <div class="color-variant-row">
+                                <input type="text" placeholder="Color name (e.g., Space Black)" class="color-name">
+                                <input type="color" class="color-picker">
+                                <input type="number" placeholder="Additional price" class="color-price" step="0.01">
+                                <button type="button" onclick="removeVariantRow(this)" class="remove-btn">×</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addColorVariant()" class="add-variant-btn">+ Add Color</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO & Marketing -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">📈</span>
+                SEO & Marketing
+            </h3>
+            
+            <div class="form-group full-width">
+                <label for="productMetaTitle">SEO Title</label>
+                <input type="text" id="productMetaTitle" maxlength="60" placeholder="iPhone 15 Pro Max - Premium Smartphone | MTech">
+                <div class="char-counter">
+                    <span id="metaTitleCounter">0</span>/60 characters
+                </div>
+                <small class="field-hint">Page title for search engines</small>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="productMetaDescription">SEO Description</label>
+                <textarea id="productMetaDescription" rows="3" maxlength="160" placeholder="Buy iPhone 15 Pro Max with A17 Pro chip, titanium design, and professional camera system. Free shipping on orders over $50."></textarea>
+                <div class="char-counter">
+                    <span id="metaDescCounter">0</span>/160 characters
+                </div>
+                <small class="field-hint">Meta description for search results</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productRating">Average Rating</label>
+                    <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.5">
+                    <small class="field-hint">Initial product rating (1-5 stars)</small>
+                </div>
+                <div class="form-group">
+                    <label for="productReviews">Number of Reviews</label>
+                    <input type="number" id="productReviews" min="0" value="0">
+                    <small class="field-hint">Initial review count</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Status & Visibility -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="section-icon">👁️</span>
+                Product Status & Visibility
+            </h3>
+            
+            <div class="status-grid">
+                <div class="status-group">
+                    <h4>Visibility Settings</h4>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productVisible" checked>
+                        <span class="toggle-slider"></span>
+                        Visible to Customers
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productSearchable" checked>
+                        <span class="toggle-slider"></span>
+                        Searchable
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productInStock" checked>
+                        <span class="toggle-slider"></span>
+                        In Stock
+                    </label>
+                </div>
+
+                <div class="status-group">
+                    <h4>Special Classifications</h4>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productFeatured">
+                        <span class="toggle-slider"></span>
+                        Featured Product
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productBestSeller">
+                        <span class="toggle-slider"></span>
+                        Best Seller
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productNewArrival">
+                        <span class="toggle-slider"></span>
+                        New Arrival
+                    </label>
+                </div>
+
+                <div class="status-group">
+                    <h4>Promotional Settings</h4>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productOnSale">
+                        <span class="toggle-slider"></span>
+                        On Sale
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productFreeShipping">
+                        <span class="toggle-slider"></span>
+                        Free Shipping
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="productLimitedOffer">
+                        <span class="toggle-slider"></span>
+                        Limited Time Offer
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions-section">
+            <div class="form-actions">
+                <button type="button" class="form-btn secondary" onclick="resetForm()">
+                    <span class="btn-icon">🔄</span>
+                    Reset Form
+                </button>
+                <button type="button" class="form-btn outline" onclick="saveDraft()">
+                    <span class="btn-icon">💾</span>
+                    Save as Draft
+                </button>
+                <button type="button" class="form-btn preview" onclick="previewProduct()">
+                    <span class="btn-icon">👁️</span>
+                    Preview Product
+                </button>
+                <button type="submit" class="form-btn primary">
+                    <span class="btn-icon">✅</span>
+                    Add Product to Store
+                </button>
+            </div>
+        </div>
+
+    </form>
+</section>
                 <!-- Settings Section (NEW) -->
                 <section id="settings" class="admin-section">
                     <h2>Admin Settings</h2>
