@@ -246,21 +246,52 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-// Setup Event Listeners
+// DOM Elements - Make sure these are properly defined at the top of your script
+const checkoutModal = document.getElementById('checkoutModal');
+const closeCheckout = document.getElementById('closeCheckout');
+const checkoutForm = document.getElementById('checkoutForm');
+const checkoutBtn = document.getElementById('checkoutBtn');
+
+// Setup Event Listeners - Add this in your setupEventListeners function
 function setupEventListeners() {
-    cartBtn.addEventListener('click', openCart);
-    closeCart.addEventListener('click', closeCartSidebar);
-    closeModal.addEventListener('click', closeProductModal);
-    closeCheckout.addEventListener('click', closeCheckoutModal);
-    checkoutBtn.addEventListener('click', openCheckout);
-    checkoutForm.addEventListener('submit', handleCheckout);
-    searchBtn.addEventListener('click', handleSearch);
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    });
+    // ... your other event listeners ...
     
+    // Checkout Modal Event Listeners
+    if (closeCheckout) {
+        closeCheckout.addEventListener('click', closeCheckoutModal);
+    }
+    
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', openCheckout);
+    }
+    
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', handleCheckout);
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === checkoutModal) {
+            closeCheckoutModal();
+        }
+        // ... other modal closing code ...
+    });
+}
+
+// Close Checkout Modal Function
+function closeCheckoutModal() {
+    if (checkoutModal) {
+        checkoutModal.style.display = 'none';
+        checkoutForm.reset(); // Clear the form when closing
+    }
+}
+
+// Make sure this runs when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners();
+    // ... other initialization code ...
+});
+
     navLinks.forEach(link => {
         link.addEventListener('click', handleNavigation);
     });
