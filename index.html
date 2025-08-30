@@ -34,6 +34,299 @@
                     <button class="account-btn" id="accountBtn">
                         <span class="account-icon">👤</span>
                         <span class="account-text">Account</span>
+                        
+
+×
+Sign In to MTech
+Access your account and manage your orders
+Email or Mobile Number 
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <div class="password-container">
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">👁️</button>
+                </div>
+            </div>
+            
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="rememberMe">
+                    Remember me
+                </label>
+                <a href="#" onclick="showForgotPassword()" class="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="auth-btn primary">Sign In</button>
+        </form>
+        
+        <div class="auth-divider">
+            <span>or</span>
+        </div>
+        
+        <div class="social-login">
+            <button type="button" class="social-btn google-btn" onclick="loginWithGoogle()">
+                <span class="social-icon">G</span>
+                Continue with Google
+            </button>
+            <button type="button" class="social-btn facebook-btn" onclick="loginWithFacebook()">
+                <span class="social-icon">f</span>
+                Continue with Facebook
+            </button>
+        </div>
+        
+        <div class="auth-switch">
+            <p>Don't have an account? <a href="#" onclick="showRegisterModal()">Sign Up</a></p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+×
+Create MTech Account
+Join thousands of satisfied customers
+First Name 
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Doe" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerEmail">Email Address</label>
+                <input type="email" id="registerEmail" placeholder="john@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerMobile">Mobile Number</label>
+                <div class="mobile-input">
+                    <select class="country-code" id="countryCode">
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+91" selected>🇮🇳 +91</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+86">🇨🇳 +86</option>
+                        <option value="+81">🇯🇵 +81</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+61">🇦🇺 +61</option>
+                        <option value="+55">🇧🇷 +55</option>
+                        <option value="+7">🇷🇺 +7</option>
+                    </select>
+                    <input type="tel" id="registerMobile" placeholder="9876543210" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <div class="password-container">
+                    <input type="password" id="registerPassword" placeholder="Create a strong password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">👁️</button>
+                </div>
+                <div class="password-strength" id="passwordStrength" style="display: none;">
+                    <div class="strength-bar" id="strengthBar"></div>
+                    <small class="strength-text" id="strengthText">Password strength: Weak</small>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-container">
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="dateOfBirth">Date of Birth (Optional)</label>
+                <input type="date" id="dateOfBirth">
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">Gender (Optional)</label>
+                <select id="gender">
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                </select>
+            </div>
+            
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreeTerms" required>
+                    I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="newsletter">
+                    Subscribe to newsletter for offers and updates
+                </label>
+            </div>
+            
+            <button type="submit" class="auth-btn primary">Create Account</button>
+        </form>
+        
+        <div class="auth-divider">
+            <span>or</span>
+        </div>
+        
+        <div class="social-login">
+            <button type="button" class="social-btn google-btn" onclick="registerWithGoogle()">
+                <span class="social-icon">G</span>
+                Sign up with Google
+            </button>
+            <button type="button" class="social-btn facebook-btn" onclick="registerWithFacebook()">
+                <span class="social-icon">f</span>
+                Sign up with Facebook
+            </button>
+        </div>
+        
+        <div class="auth-switch">
+            <p>Already have an account? <a href="#" onclick="showLoginModal()">Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+×
+Verify Mobile Number
+Enter the 6-digit code sent to your mobile
+     
+            <button type="submit" class="auth-btn primary">Verify OTP</button>
+        </form>
+        
+        <div class="otp-resend">
+            <p class="countdown" id="otpCountdown">Resend OTP in 5:00</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+×
+My Account
+Profile Orders Addresses Settings
+        <!-- Profile Tab -->
+        <div class="tab-panel active" id="profile">
+            <form class="profile-form" id="profileForm">
+                <h3>Personal Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profileFirstName">First Name</label>
+                        <input type="text" id="profileFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileLastName">Last Name</label>
+                        <input type="text" id="profileLastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profileEmail">Email Address</label>
+                    <input type="email" id="profileEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profileMobile">Mobile Number</label>
+                    <input type="tel" id="profileMobile" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profileDOB">Date of Birth</label>
+                        <input type="date" id="profileDOB">
+                    </div>
+                    <div class="form-group">
+                        <label for="profileGender">Gender</label>
+                        <select id="profileGender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn primary">Update Profile</button>
+            </form>
+        </div>
+        
+        <!-- Orders Tab -->
+        <div class="tab-panel" id="orders">
+            <h3>Order History</h3>
+            <div class="orders-list" id="userOrdersList">
+                <p>Loading orders...</p>
+            </div>
+        </div>
+        
+        <!-- Addresses Tab -->
+        <div class="tab-panel" id="addresses">
+            <div class="addresses-header">
+                <h3>Saved Addresses</h3>
+                <button class="auth-btn secondary" onclick="showAddAddress()">Add New Address</button>
+            </div>
+            <div class="addresses-list" id="userAddressesList">
+                <p>No addresses saved yet.</p>
+            </div>
+        </div>
+        
+        <!-- Settings Tab -->
+        <div class="tab-panel" id="settings">
+            <form class="settings-form" id="settingsForm">
+                <h3>Account Preferences</h3>
+                
+                <div class="preference-item">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="emailNotifications">
+                        Email notifications for orders
+                    </label>
+                </div>
+                
+                <div class="preference-item">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="smsNotifications">
+                        SMS notifications for orders
+                    </label>
+                </div>
+                
+                <div class="preference-item">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="promotionalEmails">
+                        Promotional emails and offers
+                    </label>
+                </div>
+                
+                <button type="submit" class="auth-btn primary">Save Preferences</button>
+            </form>
+            
+            <div class="danger-zone">
+                <h3>Danger Zone</h3>
+                <p>These actions cannot be undone.</p>
+                <button class="auth-btn danger" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+×
+Reset Password
+Enter your email or mobile number to reset your password
+Email or Mobile Number 
+            <button type="submit" class="auth-btn primary">Send Reset Code</button>
+        </form>
+        
+        <div class="auth-switch">
+            <p>Remember your password? <a href="#" onclick="showLoginModal()">Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+</div>
                     </button>
                     <button class="cart-btn" id="cartBtn">
                         <span class="cart-icon">🛒</span>
