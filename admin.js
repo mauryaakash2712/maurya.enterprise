@@ -1,5 +1,6 @@
-// Quick Fix for Admin Navigation - Replace your admin.js with this working version
+// Complete Admin Panel JavaScript - admin.js
 
+// Admin Data Manager
 class AdminDataManager {
     constructor() {
         this.initializeData();
@@ -104,6 +105,12 @@ class AdminDataManager {
 
 const adminDataManager = new AdminDataManager();
 
+// Customer Management Variables
+let allCustomers = [];
+let filteredCustomers = [];
+let selectedCustomers = [];
+let currentCustomer = null;
+
 // Initialize admin app
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin app loading...');
@@ -111,6 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeAdminApp() {
+    // Set login time
+    document.getElementById('loginTime').textContent = new Date().toLocaleString();
+    
     setupAdminNavigation();
     loadDashboard();
     console.log('Admin app initialized successfully');
@@ -161,7 +171,10 @@ function setupAdminNavigation() {
                         loadOrders();
                         break;
                     case 'customers':
-                        loadCustomers();
+                        initializeCustomerManagement();
+                        break;
+                    case 'settings':
+                        loadSettings();
                         break;
                 }
             } else {
@@ -189,7 +202,30 @@ function loadDashboard() {
     if (totalCustomers) totalCustomers.textContent = users.length;
     if (totalOrders) totalOrders.textContent = orders.length;
 
+    // Load recent activity
+    loadRecentActivity();
+    
     console.log('Dashboard loaded');
+}
+
+function loadRecentActivity() {
+    const recentActivity = document.getElementById('recentActivity');
+    if (!recentActivity) return;
+    
+    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+    const recentActivities = activities.slice(0, 10);
+    
+    if (recentActivities.length === 0) {
+        recentActivity.innerHTML = '<p>No recent activity found.</p>';
+        return;
+    }
+    
+    recentActivity.innerHTML = recentActivities.map(activity => `
+        <div class="activity-item">
+            <div class="activity-time">${new Date(activity.timestamp).toLocaleString()}</div>
+            <div class="activity-description">${activity.details}</div>
+        </div>
+    `).join('');
 }
 
 // Load add product form
@@ -236,7 +272,7 @@ function handleAddProduct() {
     
     // Validation
     if (!name || !brand || !category || !price || !description) {
-        alert('Please fill in all required fields');
+        showAdminMessage('Please fill in all required fields', 'error');
         return;
     }
     
@@ -261,7 +297,7 @@ function handleAddProduct() {
         const productId = adminDataManager.addProduct(product);
         
         // Show success message
-        alert(`Product "${product.name}" added successfully!`);
+        showAdminMessage(`Product "${product.name}" added successfully!`, 'success');
         
         // Reset form
         document.getElementById('addProductForm').reset();
@@ -273,870 +309,948 @@ function handleAddProduct() {
         
     } catch (error) {
         console.error('Error adding product:', error);
-        alert('Error adding product. Please try again.');
+        showAdminMessage('Error adding product. Please try again.', 'error');
     }
 }
 
-// Load other sections (simplified)
+// Load other sections
 function loadProducts() {
     console.log('Loading products section');
+    const productsGrid = document.getElementById('productsGrid');
+    if (!productsGrid) return;
+    
+    const products = adminDataManager.getProducts();
+    const categories = adminDataManager.getCategories();
+    
+    if (products.length === 0) {
+        productsGrid.innerHTML = '<p>No products found. <a href="#" onclick="showAddProduct()">Add your first product</a></p>';
+        return;
+    }
+    
+    productsGrid.innerHTML = products.map(product => {
+        const category = categories.find(cat => cat.id === product.category);
+        return `
+            <div class="product-card">
+                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="product-brand">${product.brand}</p>
+                    <p class="product-category">${category ? category.name : 'Unknown Category'}</p>
+                    <div class="product-price">$${product.price}</div>
+                    <div class="product-actions">
+                        <button onclick="editProduct(${product.id})" class="admin-btn secondary">Edit</button>
+                        <button onclick="deleteProduct(${product.id})" class="admin-btn danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function loadCategories() {
     console.log('Loading categories section');
+    const categoriesGrid = document.getElementById('categoriesGrid');
+    if (!categoriesGrid) return;
+    
+    const categories = adminDataManager.getCategories();
+    
+    categoriesGrid.innerHTML = categories.map(category => `
+        <div class="category-card">
+            <div class="category-icon">${category.image}</div>
+            <h3>${category.name}</h3>
+            <p>${category.count} products</p>
+            <div class="category-actions">
+                <button onclick="editCategory(${category.id})" class="admin-btn secondary">Edit</button>
+                <button onclick="deleteCategory(${category.id})" class="admin-btn danger">Delete</button>
+            </div>
+        </div>
+    `).join('');
 }
 
 function loadOrders() {
     console.log('Loading orders section');
+    const ordersList = document.getElementById('ordersList');
+    if (!ordersList) return;
+    
+    const orders = adminDataManager.getOrders();
+    
+    if (orders.length === 0) {
+        ordersList.innerHTML = '<p>No orders found.</p>';
+        return;
+    }
+    
+    ordersList.innerHTML = orders.map(order => `
+        <div class="order-card">
+            <div class="order-header">
+                <h4>Order #${order.id}</h4>
+                <span class="order-status">${order.status || 'Processing'}</span>
+            </div>
+            <p><strong>Customer:</strong> ${order.customer?.name || 'Unknown'}</p>
+            <p><strong>Total:</strong> $${order.total || '0.00'}</p>
+            <p><strong>Date:</strong> ${new Date(order.date).toLocaleDateString()}</p>
+            <div class="order-actions">
+                <button onclick="viewOrder(${order.id})" class="admin-btn secondary">View</button>
+                <button onclick="updateOrderStatus(${order.id})" class="admin-btn primary">Update Status</button>
+            </div>
+        </div>
+    `).join('');
 }
 
-function loadCustomers() {
-    console.log('Loading customers section');
+function loadSettings() {
+    console.log('Loading settings section');
 }
-// Admin Customer Management JavaScript - Add to admin.js
-// Customer Management Variables
-let allCustomers = [];
-let filteredCustomers = [];
-let selectedCustomers = [];
-let currentCustomer = null;
+
+// === CUSTOMER MANAGEMENT SYSTEM ===
+
 // Initialize Customer Management
 function initializeCustomerManagement() {
-loadCustomers();
-setupCustomerEventListeners();
-console.log('Customer management initialized');
+    loadCustomers();
+    setupCustomerEventListeners();
+    console.log('Customer management initialized');
 }
+
 function setupCustomerEventListeners() {
-// Search input
-const searchInput = document.getElementById('customerSearch');
-if (searchInput) {
-searchInput.addEventListener('input', debounce(searchCustomers, 300));
-}
-// Customer details modal tabs
-const customerTabs = document.querySelectorAll('.customer-details-tabs .tab-btn');
-customerTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-        switchCustomerTab(this.dataset.tab);
+    // Search input
+    const searchInput = document.getElementById('customerSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(searchCustomers, 300));
+    }
+    
+    // Customer details modal tabs
+    const customerTabs = document.querySelectorAll('.customer-details-tabs .tab-btn');
+    customerTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            switchCustomerTab(this.dataset.tab);
+        });
     });
-});
-
-// Bulk email form
-const bulkEmailForm = document.getElementById('bulkEmailForm');
-if (bulkEmailForm) {
-    bulkEmailForm.addEventListener('submit', handleBulkEmail);
+    
+    // Bulk email form
+    const bulkEmailForm = document.getElementById('bulkEmailForm');
+    if (bulkEmailForm) {
+        bulkEmailForm.addEventListener('submit', handleBulkEmail);
+    }
 }
 
-}
 // Load Customers from Storage
 function loadCustomers() {
-try {
-// Get customers from the customer database created by authentication system
-const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
-const userActivities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-const orders = JSON.parse(localStorage.getItem('mtechOrders')) || [];
-    // Enhance customer data with additional calculations
-    allCustomers = customerDatabase.map(customer => {
-        // Calculate customer metrics
-        const customerOrders = orders.filter(order => 
-            order.customer && (
-                order.customer.email === customer.email ||
-                order.customer.id === customer.id
-            )
-        );
+    try {
+        // Get customers from the customer database created by authentication system
+        const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
+        const userActivities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+        const orders = JSON.parse(localStorage.getItem('mtechOrders')) || [];
         
-        const totalSpent = customerOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-        const averageOrderValue = customerOrders.length > 0 ? totalSpent / customerOrders.length : 0;
+        // Enhance customer data with additional calculations
+        allCustomers = customerDatabase.map(customer => {
+            // Calculate customer metrics
+            const customerOrders = orders.filter(order => 
+                order.customer && (
+                    order.customer.email === customer.email ||
+                    order.customer.id === customer.id
+                )
+            );
+            
+            const totalSpent = customerOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+            const averageOrderValue = customerOrders.length > 0 ? totalSpent / customerOrders.length : 0;
+            
+            // Get recent activities
+            const customerActivities = userActivities.filter(activity => activity.userId === customer.id);
+            const lastActivity = customerActivities.length > 0 ? customerActivities[0].timestamp : null;
+            
+            // Calculate days since registration
+            const regDate = new Date(customer.registrationDate);
+            const daysSinceReg = Math.floor((Date.now() - regDate.getTime()) / (1000 * 60 * 60 * 24));
+            
+            return {
+                ...customer,
+                totalOrders: customerOrders.length,
+                totalSpent: totalSpent,
+                averageOrderValue: averageOrderValue,
+                lastActivity: lastActivity,
+                daysSinceRegistration: daysSinceReg,
+                recentOrders: customerOrders.sort((a, b) => new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)).slice(0, 5),
+                isNewCustomer: daysSinceReg <= 30,
+                isActive: lastActivity && (Date.now() - new Date(lastActivity).getTime()) <= (30 * 24 * 60 * 60 * 1000) // Active if logged in within 30 days
+            };
+        });
         
-        // Get recent activities
-        const customerActivities = userActivities.filter(activity => activity.userId === customer.id);
-        const lastActivity = customerActivities.length > 0 ? customerActivities[0].timestamp : null;
+        filteredCustomers = [...allCustomers];
+        updateCustomerStats();
+        renderCustomersTable();
+        loadCustomerActivities();
         
-        // Calculate days since registration
-        const regDate = new Date(customer.registrationDate);
-        const daysSinceReg = Math.floor((Date.now() - regDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        return {
-            ...customer,
-            totalOrders: customerOrders.length,
-            totalSpent: totalSpent,
-            averageOrderValue: averageOrderValue,
-            lastActivity: lastActivity,
-            daysSinceRegistration: daysSinceReg,
-            recentOrders: customerOrders.sort((a, b) => new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)).slice(0, 5),
-            isNewCustomer: daysSinceReg <= 30,
-            isActive: lastActivity && (Date.now() - new Date(lastActivity).getTime()) <= (30 * 24 * 60 * 60 * 1000) // Active if logged in within 30 days
-        };
-    });
-    
-    filteredCustomers = [...allCustomers];
-    updateCustomerStats();
-    renderCustomersTable();
-    loadCustomerActivities();
-    
-} catch (error) {
-    console.error('Error loading customers:', error);
-    showAdminMessage('Error loading customer data', 'error');
+    } catch (error) {
+        console.error('Error loading customers:', error);
+        showAdminMessage('Error loading customer data', 'error');
+    }
 }
 
-}
 // Update Customer Statistics
 function updateCustomerStats() {
-const totalCustomers = allCustomers.length;
-const verifiedCustomers = allCustomers.filter(c => c.verified || c.mobileVerified).length;
-const newCustomers = allCustomers.filter(c => c.isNewCustomer).length;
-const activeCustomers = allCustomers.filter(c => c.isActive).length;
-// Update stat displays
-document.getElementById('totalCustomersCount').textContent = totalCustomers;
-document.getElementById('verifiedCustomersCount').textContent = verifiedCustomers;
-document.getElementById('newCustomersCount').textContent = newCustomers;
-document.getElementById('activeCustomersCount').textContent = activeCustomers;
-
+    const totalCustomers = allCustomers.length;
+    const verifiedCustomers = allCustomers.filter(c => c.verified || c.mobileVerified).length;
+    const newCustomers = allCustomers.filter(c => c.isNewCustomer).length;
+    const activeCustomers = allCustomers.filter(c => c.isActive).length;
+    
+    // Update stat displays
+    const totalCustomersCount = document.getElementById('totalCustomersCount');
+    const verifiedCustomersCount = document.getElementById('verifiedCustomersCount');
+    const newCustomersCount = document.getElementById('newCustomersCount');
+    const activeCustomersCount = document.getElementById('activeCustomersCount');
+    
+    if (totalCustomersCount) totalCustomersCount.textContent = totalCustomers;
+    if (verifiedCustomersCount) verifiedCustomersCount.textContent = verifiedCustomers;
+    if (newCustomersCount) newCustomersCount.textContent = newCustomers;
+    if (activeCustomersCount) activeCustomersCount.textContent = activeCustomers;
 }
+
 // Render Customers Table
 function renderCustomersTable() {
-const tbody = document.getElementById('customersTableBody');
-if (!tbody) return;
-if (filteredCustomers.length === 0) {
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="10" style="text-align: center; padding: 2rem;">
-                <div class="empty-state">
-                    <h3>No customers found</h3>
-                    <p>No customers match your current filters.</p>
+    const tbody = document.getElementById('customersTableBody');
+    if (!tbody) return;
+    
+    if (filteredCustomers.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" style="text-align: center; padding: 2rem;">
+                    <div class="empty-state">
+                        <h3>No customers found</h3>
+                        <p>No customers match your current filters.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = filteredCustomers.map(customer => `
+        <tr class="customer-row" data-customer-id="${customer.id}">
+            <td>
+                <input type="checkbox" class="customer-checkbox" value="${customer.id}" onchange="toggleCustomerSelection(${customer.id})">
+            </td>
+            <td>
+                <div class="customer-info">
+                    <div class="customer-avatar-small">${getCustomerInitials(customer.fullName || customer.firstName + ' ' + customer.lastName)}</div>
+                    <div class="customer-details">
+                        <div class="customer-name">${customer.fullName || customer.firstName + ' ' + customer.lastName}</div>
+                        <div class="customer-meta">ID: ${customer.id}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="email-cell">
+                    <span class="email-text">${customer.email}</span>
+                    ${customer.emailVerified ? '<span class="verified-badge">✓</span>' : ''}
+                </div>
+            </td>
+            <td>
+                <div class="mobile-cell">
+                    <span class="mobile-text">${formatMobile(customer.mobile)}</span>
+                    ${customer.mobileVerified ? '<span class="verified-badge">✓</span>' : ''}
+                </div>
+            </td>
+            <td>
+                <div class="date-cell">
+                    <span class="date-text">${formatDate(customer.registrationDate)}</span>
+                    <span class="date-meta">${customer.daysSinceRegistration} days ago</span>
+                </div>
+            </td>
+            <td>
+                <div class="date-cell">
+                    <span class="date-text">${customer.lastLogin ? formatDate(customer.lastLogin) : 'Never'}</span>
+                    ${customer.lastLogin ? `<span class="date-meta">${getTimeAgo(customer.lastLogin)}</span>` : ''}
+                </div>
+            </td>
+            <td>
+                <div class="status-badges">
+                    <span class="status-badge ${customer.status || 'active'}">${getStatusDisplay(customer)}</span>
+                    ${customer.isNewCustomer ? '<span class="badge new">NEW</span>' : ''}
+                    ${customer.isActive ? '<span class="badge active">ACTIVE</span>' : ''}
+                </div>
+            </td>
+            <td>
+                <div class="orders-cell">
+                    <span class="orders-count">${customer.totalOrders}</span>
+                    <span class="orders-meta">orders</span>
+                </div>
+            </td>
+            <td>
+                <div class="amount-cell">
+                    <span class="amount-text">$${customer.totalSpent.toFixed(2)}</span>
+                    ${customer.averageOrderValue > 0 ? `<span class="amount-meta">avg: $${customer.averageOrderValue.toFixed(2)}</span>` : ''}
+                </div>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn view-btn" onclick="viewCustomerDetails(${customer.id})" title="View Details">👁️</button>
+                    <button class="action-btn edit-btn" onclick="editCustomer(${customer.id})" title="Edit">✏️</button>
+                    <button class="action-btn email-btn" onclick="emailSingleCustomer(${customer.id})" title="Send Email">✉️</button>
+                    <button class="action-btn ${customer.status === 'active' ? 'disable-btn' : 'enable-btn'}" 
+                            onclick="toggleCustomerStatus(${customer.id})" 
+                            title="${customer.status === 'active' ? 'Disable' : 'Enable'}">
+                        ${customer.status === 'active' ? '🚫' : '✅'}
+                    </button>
                 </div>
             </td>
         </tr>
-    `;
-    return;
+    `).join('');
 }
 
-tbody.innerHTML = filteredCustomers.map(customer => `
-    <tr class="customer-row" data-customer-id="${customer.id}">
-        <td>
-            <input type="checkbox" class="customer-checkbox" value="${customer.id}" onchange="toggleCustomerSelection(${customer.id})">
-        </td>
-        <td>
-            <div class="customer-info">
-                <div class="customer-avatar-small">${getCustomerInitials(customer.fullName || customer.firstName + ' ' + customer.lastName)}</div>
-                <div class="customer-details">
-                    <div class="customer-name">${customer.fullName || customer.firstName + ' ' + customer.lastName}</div>
-                    <div class="customer-meta">ID: ${customer.id}</div>
-                </div>
-            </div>
-        </td>
-        <td>
-            <div class="email-cell">
-                <span class="email-text">${customer.email}</span>
-                ${customer.emailVerified ? '<span class="verified-badge">✓</span>' : ''}
-            </div>
-        </td>
-        <td>
-            <div class="mobile-cell">
-                <span class="mobile-text">${formatMobile(customer.mobile)}</span>
-                ${customer.mobileVerified ? '<span class="verified-badge">✓</span>' : ''}
-            </div>
-        </td>
-        <td>
-            <div class="date-cell">
-                <span class="date-text">${formatDate(customer.registrationDate)}</span>
-                <span class="date-meta">${customer.daysSinceRegistration} days ago</span>
-            </div>
-        </td>
-        <td>
-            <div class="date-cell">
-                <span class="date-text">${customer.lastLogin ? formatDate(customer.lastLogin) : 'Never'}</span>
-                ${customer.lastLogin ? `<span class="date-meta">${getTimeAgo(customer.lastLogin)}</span>` : ''}
-            </div>
-        </td>
-        <td>
-            <div class="status-badges">
-                <span class="status-badge ${customer.status || 'active'}">${getStatusDisplay(customer)}</span>
-                ${customer.isNewCustomer ? '<span class="badge new">NEW</span>' : ''}
-                ${customer.isActive ? '<span class="badge active">ACTIVE</span>' : ''}
-            </div>
-        </td>
-        <td>
-            <div class="orders-cell">
-                <span class="orders-count">${customer.totalOrders}</span>
-                <span class="orders-meta">orders</span>
-            </div>
-        </td>
-        <td>
-            <div class="amount-cell">
-                <span class="amount-text">$${customer.totalSpent.toFixed(2)}</span>
-                ${customer.averageOrderValue > 0 ? `<span class="amount-meta">avg: $${customer.averageOrderValue.toFixed(2)}</span>` : ''}
-            </div>
-        </td>
-        <td>
-            <div class="action-buttons">
-                <button class="action-btn view-btn" onclick="viewCustomerDetails(${customer.id})" title="View Details">👁️</button>
-                <button class="action-btn edit-btn" onclick="editCustomer(${customer.id})" title="Edit">✏️</button>
-                <button class="action-btn email-btn" onclick="emailSingleCustomer(${customer.id})" title="Send Email">✉️</button>
-                <button class="action-btn ${customer.status === 'active' ? 'disable-btn' : 'enable-btn'}" 
-                        onclick="toggleCustomerStatus(${customer.id})" 
-                        title="${customer.status === 'active' ? 'Disable' : 'Enable'}">
-                    ${customer.status === 'active' ? '🚫' : '✅'}
-                </button>
-            </div>
-        </td>
-    </tr>
-`).join('');
-
-}
 // Customer Search
 function searchCustomers() {
-const searchTerm = document.getElementById('customerSearch').value.toLowerCase().trim();
-if (!searchTerm) {
-    filteredCustomers = [...allCustomers];
-} else {
-    filteredCustomers = allCustomers.filter(customer => {
-        return (
-            customer.firstName.toLowerCase().includes(searchTerm) ||
-            customer.lastName.toLowerCase().includes(searchTerm) ||
-            (customer.fullName && customer.fullName.toLowerCase().includes(searchTerm)) ||
-            customer.email.toLowerCase().includes(searchTerm) ||
-            (customer.mobile && customer.mobile.includes(searchTerm)) ||
-            customer.id.toString().includes(searchTerm)
-        );
-    });
+    const searchTerm = document.getElementById('customerSearch').value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        filteredCustomers = [...allCustomers];
+    } else {
+        filteredCustomers = allCustomers.filter(customer => {
+            return (
+                customer.firstName.toLowerCase().includes(searchTerm) ||
+                customer.lastName.toLowerCase().includes(searchTerm) ||
+                (customer.fullName && customer.fullName.toLowerCase().includes(searchTerm)) ||
+                customer.email.toLowerCase().includes(searchTerm) ||
+                (customer.mobile && customer.mobile.includes(searchTerm)) ||
+                customer.id.toString().includes(searchTerm)
+            );
+        });
+    }
+    
+    renderCustomersTable();
 }
 
-renderCustomersTable();
-
-}
 // Filter Customers
 function filterCustomers() {
-const statusFilter = document.getElementById('customerStatus').value;
-let filtered = [...allCustomers];
-switch (statusFilter) {
-    case 'verified':
-        filtered = filtered.filter(c => c.verified || c.mobileVerified);
-        break;
-    case 'unverified':
-        filtered = filtered.filter(c => !c.verified && !c.mobileVerified);
-        break;
-    case 'active':
-        filtered = filtered.filter(c => c.isActive);
-        break;
-    case 'inactive':
-        filtered = filtered.filter(c => !c.isActive);
-        break;
-    default:
-        // All customers
-        break;
+    const statusFilter = document.getElementById('customerStatus').value;
+    let filtered = [...allCustomers];
+    
+    switch (statusFilter) {
+        case 'verified':
+            filtered = filtered.filter(c => c.verified || c.mobileVerified);
+            break;
+        case 'unverified':
+            filtered = filtered.filter(c => !c.verified && !c.mobileVerified);
+            break;
+        case 'active':
+            filtered = filtered.filter(c => c.isActive);
+            break;
+        case 'inactive':
+            filtered = filtered.filter(c => !c.isActive);
+            break;
+        default:
+            // All customers
+            break;
+    }
+    
+    filteredCustomers = filtered;
+    renderCustomersTable();
 }
 
-filteredCustomers = filtered;
-renderCustomersTable();
-
-}
 // Sort Customers
 function sortCustomers() {
-const sortBy = document.getElementById('customerSort').value;
-switch (sortBy) {
-    case 'newest':
-        filteredCustomers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
-        break;
-    case 'oldest':
-        filteredCustomers.sort((a, b) => new Date(a.registrationDate) - new Date(b.registrationDate));
-        break;
-    case 'name':
-        filteredCustomers.sort((a, b) => (a.fullName || a.firstName).localeCompare(b.fullName || b.firstName));
-        break;
-    case 'name-desc':
-        filteredCustomers.sort((a, b) => (b.fullName || b.firstName).localeCompare(a.fullName || a.firstName));
-        break;
-    case 'login':
-        filteredCustomers.sort((a, b) => {
-            const aDate = a.lastLogin ? new Date(a.lastLogin) : new Date(0);
-            const bDate = b.lastLogin ? new Date(b.lastLogin) : new Date(0);
-            return bDate - aDate;
-        });
-        break;
-    case 'orders':
-        filteredCustomers.sort((a, b) => b.totalOrders - a.totalOrders);
-        break;
-    default:
-        break;
+    const sortBy = document.getElementById('customerSort').value;
+    
+    switch (sortBy) {
+        case 'newest':
+            filteredCustomers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+            break;
+        case 'oldest':
+            filteredCustomers.sort((a, b) => new Date(a.registrationDate) - new Date(b.registrationDate));
+            break;
+        case 'name':
+            filteredCustomers.sort((a, b) => (a.fullName || a.firstName).localeCompare(b.fullName || b.firstName));
+            break;
+        case 'name-desc':
+            filteredCustomers.sort((a, b) => (b.fullName || b.firstName).localeCompare(a.fullName || a.firstName));
+            break;
+        case 'login':
+            filteredCustomers.sort((a, b) => {
+                const aDate = a.lastLogin ? new Date(a.lastLogin) : new Date(0);
+                const bDate = b.lastLogin ? new Date(b.lastLogin) : new Date(0);
+                return bDate - aDate;
+            });
+            break;
+        case 'orders':
+            filteredCustomers.sort((a, b) => b.totalOrders - a.totalOrders);
+            break;
+        default:
+            break;
+    }
+    
+    renderCustomersTable();
 }
 
-renderCustomersTable();
-
-}
 // Clear Filters
 function clearCustomerFilters() {
-document.getElementById('customerSearch').value = '';
-document.getElementById('customerStatus').value = 'all';
-document.getElementById('customerSort').value = 'newest';
-filteredCustomers = [...allCustomers];
-renderCustomersTable();
+    document.getElementById('customerSearch').value = '';
+    document.getElementById('customerStatus').value = 'all';
+    document.getElementById('customerSort').value = 'newest';
+    filteredCustomers = [...allCustomers];
+    renderCustomersTable();
 }
+
 // Customer Selection
 function toggleCustomerSelection(customerId) {
-const index = selectedCustomers.indexOf(customerId);
-if (index > -1) {
-selectedCustomers.splice(index, 1);
-} else {
-selectedCustomers.push(customerId);
+    const index = selectedCustomers.indexOf(customerId);
+    if (index > -1) {
+        selectedCustomers.splice(index, 1);
+    } else {
+        selectedCustomers.push(customerId);
+    }
+    
+    updateBulkActions();
+    updateSelectAllCheckbox();
 }
-updateBulkActions();
-updateSelectAllCheckbox();
 
-}
 function toggleSelectAllCustomers() {
-const selectAll = document.getElementById('selectAllCustomers').checked;
-const checkboxes = document.querySelectorAll('.customer-checkbox');
-if (selectAll) {
-    selectedCustomers = filteredCustomers.map(c => c.id);
-} else {
-    selectedCustomers = [];
+    const selectAll = document.getElementById('selectAllCustomers').checked;
+    const checkboxes = document.querySelectorAll('.customer-checkbox');
+    
+    if (selectAll) {
+        selectedCustomers = filteredCustomers.map(c => c.id);
+    } else {
+        selectedCustomers = [];
+    }
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll;
+    });
+    
+    updateBulkActions();
 }
 
-checkboxes.forEach(checkbox => {
-    checkbox.checked = selectAll;
-});
-
-updateBulkActions();
-
-}
 function updateSelectAllCheckbox() {
-const selectAllCheckbox = document.getElementById('selectAllCustomers');
-if (selectedCustomers.length === 0) {
-selectAllCheckbox.checked = false;
-selectAllCheckbox.indeterminate = false;
-} else if (selectedCustomers.length === filteredCustomers.length) {
-selectAllCheckbox.checked = true;
-selectAllCheckbox.indeterminate = false;
-} else {
-selectAllCheckbox.checked = false;
-selectAllCheckbox.indeterminate = true;
-}
-}
-function updateBulkActions() {
-const bulkActions = document.getElementById('bulkActions');
-const selectedCount = document.getElementById('selectedCount');
-if (selectedCustomers.length > 0) {
-    bulkActions.style.display = 'flex';
-    selectedCount.textContent = selectedCustomers.length;
-} else {
-    bulkActions.style.display = 'none';
+    const selectAllCheckbox = document.getElementById('selectAllCustomers');
+    if (selectedCustomers.length === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+    } else if (selectedCustomers.length === filteredCustomers.length) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+    } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+    }
 }
 
+function updateBulkActions() {
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.getElementById('selectedCount');
+    
+    if (selectedCustomers.length > 0) {
+        bulkActions.style.display = 'flex';
+        selectedCount.textContent = selectedCustomers.length;
+    } else {
+        bulkActions.style.display = 'none';
+    }
 }
+
 // View Customer Details
 function viewCustomerDetails(customerId) {
-const customer = allCustomers.find(c => c.id === customerId);
-if (!customer) return;
-currentCustomer = customer;
-populateCustomerDetails(customer);
-document.getElementById('customerDetailsModal').style.display = 'block';
-
+    const customer = allCustomers.find(c => c.id === customerId);
+    if (!customer) return;
+    
+    currentCustomer = customer;
+    populateCustomerDetails(customer);
+    document.getElementById('customerDetailsModal').style.display = 'block';
 }
+
 function populateCustomerDetails(customer) {
-// Header information
-document.getElementById('customerName').textContent = customer.fullName || ${customer.firstName} ${customer.lastName};
-document.getElementById('customerEmail').textContent = customer.email;
-// Badges
-const verifiedBadge = document.getElementById('verifiedBadge');
-const activeBadge = document.getElementById('activeBadge');
-
-verifiedBadge.style.display = (customer.verified || customer.mobileVerified) ? 'inline' : 'none';
-activeBadge.style.display = customer.isActive ? 'inline' : 'none';
-
-// Overview tab
-document.getElementById('detailsFullName').textContent = customer.fullName || `${customer.firstName} ${customer.lastName}`;
-document.getElementById('detailsEmail').textContent = customer.email;
-document.getElementById('detailsMobile').textContent = formatMobile(customer.mobile);
-document.getElementById('detailsGender').textContent = customer.gender ? capitalizeFirst(customer.gender) : 'Not specified';
-document.getElementById('detailsDOB').textContent = customer.dateOfBirth ? formatDate(customer.dateOfBirth) : 'Not provided';
-document.getElementById('detailsAge').textContent = customer.dateOfBirth ? calculateAge(customer.dateOfBirth) : '-';
-
-// Account information
-document.getElementById('detailsRegDate').textContent = formatDate(customer.registrationDate);
-document.getElementById('detailsLastLogin').textContent = customer.lastLogin ? formatDate(customer.lastLogin) : 'Never';
-document.getElementById('detailsLoginCount').textContent = customer.loginCount || 0;
-document.getElementById('detailsStatus').textContent = getStatusDisplay(customer);
-document.getElementById('detailsEmailVerified').textContent = customer.emailVerified ? 'Yes' : 'No';
-document.getElementById('detailsMobileVerified').textContent = customer.mobileVerified ? 'Yes' : 'No';
-
-// Purchase summary
-document.getElementById('detailsTotalOrders').textContent = customer.totalOrders;
-document.getElementById('detailsTotalSpent').textContent = `$${customer.totalSpent.toFixed(2)}`;
-document.getElementById('detailsAverageOrder').textContent = `$${customer.averageOrderValue.toFixed(2)}`;
-document.getElementById('detailsCustomerSince').textContent = `${customer.daysSinceRegistration} days`;
-
-if (customer.recentOrders && customer.recentOrders.length > 0) {
-    const lastOrder = customer.recentOrders[0];
-    document.getElementById('detailsLastOrder').textContent = formatDate(lastOrder.orderDate || lastOrder.date);
-} else {
-    document.getElementById('detailsLastOrder').textContent = 'No orders yet';
+    // Header information
+    document.getElementById('customerName').textContent = customer.fullName || `${customer.firstName} ${customer.lastName}`;
+    document.getElementById('customerEmail').textContent = customer.email;
+    
+    // Badges
+    const verifiedBadge = document.getElementById('verifiedBadge');
+    const activeBadge = document.getElementById('activeBadge');
+    
+    verifiedBadge.style.display = (customer.verified || customer.mobileVerified) ? 'inline' : 'none';
+    activeBadge.style.display = customer.isActive ? 'inline' : 'none';
+    
+    // Overview tab
+    document.getElementById('detailsFullName').textContent = customer.fullName || `${customer.firstName} ${customer.lastName}`;
+    document.getElementById('detailsEmail').textContent = customer.email;
+    document.getElementById('detailsMobile').textContent = formatMobile(customer.mobile);
+    document.getElementById('detailsGender').textContent = customer.gender ? capitalizeFirst(customer.gender) : 'Not specified';
+    
+    // Account information
+    document.getElementById('detailsRegDate').textContent = formatDate(customer.registrationDate);
+    document.getElementById('detailsLastLogin').textContent = customer.lastLogin ? formatDate(customer.lastLogin) : 'Never';
+    document.getElementById('detailsStatus').textContent = getStatusDisplay(customer);
+    document.getElementById('detailsMobileVerified').textContent = customer.mobileVerified ? 'Yes' : 'No';
 }
 
-document.getElementById('detailsCLV').textContent = `$${customer.totalSpent.toFixed(2)}`; // Simplified CLV
-
-// Preferences
-if (customer.preferences) {
-    document.getElementById('prefEmailNotif').textContent = customer.preferences.emailNotifications ? 'Enabled' : 'Disabled';
-    document.getElementById('prefSMSNotif').textContent = customer.preferences.smsNotifications ? 'Enabled' : 'Disabled';
-    document.getElementById('prefPromoEmails').textContent = customer.preferences.promotionalEmails ? 'Enabled' : 'Disabled';
-}
-document.getElementById('prefNewsletter').textContent = customer.newsletter ? 'Subscribed' : 'Not subscribed';
-
-// Load additional data for other tabs
-loadCustomerOrders(customer);
-loadCustomerActivity(customer);
-
-}
-function loadCustomerOrders(customer) {
-const orders = JSON.parse(localStorage.getItem('mtechOrders')) || [];
-const customerOrders = orders.filter(order =>
-order.customer && (
-order.customer.email === customer.email ||
-order.customer.id === customer.id
-)
-);
-const ordersList = document.getElementById('customerOrdersList');
-if (customerOrders.length === 0) {
-    ordersList.innerHTML = '<div class="empty-state"><p>No orders found for this customer.</p></div>';
-    return;
-}
-
-ordersList.innerHTML = customerOrders.map(order => `
-    <div class="customer-order-item">
-        <div class="order-header">
-            <div class="order-id">Order #${order.orderId || order.id}</div>
-            <div class="order-total">$${(order.total || 0).toFixed(2)}</div>
-        </div>
-        <div class="order-details">
-            <div class="order-date">Date: ${formatDate(order.orderDate || order.date)}</div>
-            <div class="order-status">Status: ${order.status || 'Processing'}</div>
-            <div class="order-items">Items: ${(order.items || []).length}</div>
-        </div>
-        <div class="order-actions">
-            <button class="action-btn view-btn" onclick="viewOrderDetails('${order.id || order.orderId}')">View Order</button>
-        </div>
-    </div>
-`).join('');
-
-}
-function loadCustomerActivity(customer) {
-const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-const customerActivities = activities
-.filter(activity => activity.userId === customer.id)
-.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-.slice(0, 20); // Show last 20 activities
-const activityList = document.getElementById('customerActivityList');
-if (customerActivities.length === 0) {
-    activityList.innerHTML = '<div class="empty-state"><p>No activities recorded for this customer.</p></div>';
-    return;
-}
-
-activityList.innerHTML = customerActivities.map(activity => `
-    <div class="activity-item">
-        <div class="activity-icon">${getActivityIcon(activity.action)}</div>
-        <div class="activity-content">
-            <div class="activity-action">${getActivityDescription(activity.action, activity.details)}</div>
-            <div class="activity-time">${formatDate(activity.timestamp)} - ${getTimeAgo(activity.timestamp)}</div>
-        </div>
-    </div>
-`).join('');
-
-}
 function switchCustomerTab(tabName) {
-// Update tab buttons
-document.querySelectorAll('.customer-details-tabs .tab-btn').forEach(btn => {
-btn.classList.remove('active');
-});
-document.querySelector([data-tab="${tabName}"]).classList.add('active');
-// Update tab panels
-document.querySelectorAll('.customer-tab-panel').forEach(panel => {
-    panel.classList.remove('active');
-});
-document.getElementById(tabName).classList.add('active');
-
+    // Update tab buttons
+    document.querySelectorAll('.customer-details-tabs .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    // Update tab panels
+    document.querySelectorAll('.customer-tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    document.getElementById(tabName).classList.add('active');
 }
+
 // Load Customer Activities for Main Page
 function loadCustomerActivities() {
-const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-const recentActivities = activities
-.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-.slice(0, 10);
-const activitiesList = document.getElementById('customerActivitiesList');
-if (recentActivities.length === 0) {
-    activitiesList.innerHTML = '<div class="activity-item"><p>No customer activities yet.</p></div>';
-    return;
-}
-
-activitiesList.innerHTML = recentActivities.map(activity => {
-    const customer = allCustomers.find(c => c.id === activity.userId);
-    const customerName = customer ? customer.fullName || `${customer.firstName} ${customer.lastName}` : 'Unknown Customer';
+    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+    const recentActivities = activities
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 10);
     
-    return `
-        <div class="activity-item">
-            <div class="activity-avatar">${customer ? getCustomerInitials(customerName) : '?'}</div>
-            <div class="activity-content">
-                <div class="activity-text">
-                    <strong>${customerName}</strong> ${getActivityDescription(activity.action, activity.details)}
+    const activitiesList = document.getElementById('customerActivitiesList');
+    if (!activitiesList) return;
+    
+    if (recentActivities.length === 0) {
+        activitiesList.innerHTML = '<div class="activity-item"><p>No customer activities yet.</p></div>';
+        return;
+    }
+    
+    activitiesList.innerHTML = recentActivities.map(activity => {
+        const customer = allCustomers.find(c => c.id === activity.userId);
+        const customerName = customer ? customer.fullName || `${customer.firstName} ${customer.lastName}` : 'Unknown Customer';
+        
+        return `
+            <div class="activity-item">
+                <div class="activity-avatar">${customer ? getCustomerInitials(customerName) : '?'}</div>
+                <div class="activity-content">
+                    <div class="activity-text">
+                        <strong>${customerName}</strong> ${getActivityDescription(activity.action, activity.details)}
+                    </div>
+                    <div class="activity-time">${getTimeAgo(activity.timestamp)}</div>
                 </div>
-                <div class="activity-time">${getTimeAgo(activity.timestamp)}</div>
             </div>
-        </div>
-    `;
-}).join('');
-
+        `;
+    }).join('');
 }
+
 // Export Functions
 function exportCustomers() {
-const customersToExport = selectedCustomers.length > 0
-? allCustomers.filter(c => selectedCustomers.includes(c.id))
-: filteredCustomers;
-if (customersToExport.length === 0) {
-    showAdminMessage('No customers to export', 'error');
-    return;
+    const customersToExport = selectedCustomers.length > 0 
+        ? allCustomers.filter(c => selectedCustomers.includes(c.id))
+        : filteredCustomers;
+    
+    if (customersToExport.length === 0) {
+        showAdminMessage('No customers to export', 'error');
+        return;
+    }
+    
+    const csvContent = generateCustomerCSV(customersToExport);
+    downloadCSV(csvContent, `customers-export-${new Date().toISOString().split('T')[0]}.csv`);
+    showAdminMessage(`Exported ${customersToExport.length} customers successfully`, 'success');
 }
 
-const csvContent = generateCustomerCSV(customersToExport);
-downloadCSV(csvContent, `customers-export-${new Date().toISOString().split('T')[0]}.csv`);
-showAdminMessage(`Exported ${customersToExport.length} customers successfully`, 'success');
-
-}
 function generateCustomerCSV(customers) {
-const headers = [
-'ID', 'First Name', 'Last Name', 'Email', 'Mobile', 'Gender', 'Date of Birth',
-'Registration Date', 'Last Login', 'Login Count', 'Status', 'Email Verified',
-'Mobile Verified', 'Total Orders', 'Total Spent', 'Newsletter', 'Email Notifications',
-'SMS Notifications', 'Promotional Emails'
-];
-const rows = customers.map(customer => [
-    customer.id,
-    customer.firstName,
-    customer.lastName,
-    customer.email,
-    customer.mobile,
-    customer.gender || '',
-    customer.dateOfBirth || '',
-    customer.registrationDate,
-    customer.lastLogin || '',
-    customer.loginCount || 0,
-    customer.status || 'active',
-    customer.emailVerified ? 'Yes' : 'No',
-    customer.mobileVerified ? 'Yes' : 'No',
-    customer.totalOrders,
-    customer.totalSpent.toFixed(2),
-    customer.newsletter ? 'Yes' : 'No',
-    customer.preferences ? (customer.preferences.emailNotifications ? 'Yes' : 'No') : 'No',
-    customer.preferences ? (customer.preferences.smsNotifications ? 'Yes' : 'No') : 'No',
-    customer.preferences ? (customer.preferences.promotionalEmails ? 'Yes' : 'No') : 'No'
-]);
-
-return [headers, ...rows].map(row => 
-    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-).join('\n');
-
+    const headers = [
+        'ID', 'First Name', 'Last Name', 'Email', 'Mobile', 'Gender', 'Date of Birth',
+        'Registration Date', 'Last Login', 'Login Count', 'Status', 'Email Verified',
+        'Mobile Verified', 'Total Orders', 'Total Spent', 'Newsletter'
+    ];
+    
+    const rows = customers.map(customer => [
+        customer.id,
+        customer.firstName,
+        customer.lastName,
+        customer.email,
+        customer.mobile,
+        customer.gender || '',
+        customer.dateOfBirth || '',
+        customer.registrationDate,
+        customer.lastLogin || '',
+        customer.loginCount || 0,
+        customer.status || 'active',
+        customer.emailVerified ? 'Yes' : 'No',
+        customer.mobileVerified ? 'Yes' : 'No',
+        customer.totalOrders,
+        customer.totalSpent.toFixed(2),
+        customer.newsletter ? 'Yes' : 'No'
+    ]);
+    
+    return [headers, ...rows].map(row => 
+        row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
 }
+
 // Bulk Actions
 function bulkEmailCustomers() {
-if (selectedCustomers.length === 0) {
-showAdminMessage('Please select customers first', 'error');
-return;
+    if (selectedCustomers.length === 0) {
+        showAdminMessage('Please select customers first', 'error');
+        return;
+    }
+    
+    document.getElementById('bulkEmailModal').style.display = 'block';
 }
-document.getElementById('bulkEmailModal').style.display = 'block';
 
-}
 function handleBulkEmail(e) {
-e.preventDefault();
-const subject = document.getElementById('emailSubject').value.trim();
-const message = document.getElementById('emailMessage').value.trim();
-
-if (!subject || !message) {
-    showAdminMessage('Please fill in all fields', 'error');
-    return;
-}
-
-// In a real application, you would send this to your email service
-console.log('Bulk email to be sent:', {
-    recipients: selectedCustomers,
-    subject: subject,
-    message: message
-});
-
-showAdminMessage(`Email queued for ${selectedCustomers.length} customers`, 'success');
-closeBulkEmailModal();
-
-// Log the bulk email action
-selectedCustomers.forEach(customerId => {
-    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-    activities.unshift({
-        id: Date.now() + Math.random(),
-        userId: customerId,
-        action: 'bulk_email_sent',
-        details: `Bulk email: ${subject}`,
-        timestamp: new Date().toISOString()
+    e.preventDefault();
+    
+    const subject = document.getElementById('emailSubject').value.trim();
+    const message = document.getElementById('emailMessage').value.trim();
+    
+    if (!subject || !message) {
+        showAdminMessage('Please fill in all fields', 'error');
+        return;
+    }
+    
+    // In a real application, you would send this to your email service
+    console.log('Bulk email to be sent:', {
+        recipients: selectedCustomers,
+        subject: subject,
+        message: message
     });
-    localStorage.setItem('mtechUserActivities', JSON.stringify(activities));
-});
-
+    
+    showAdminMessage(`Email queued for ${selectedCustomers.length} customers`, 'success');
+    closeBulkEmailModal();
+    
+    // Log the bulk email action
+    selectedCustomers.forEach(customerId => {
+        const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+        activities.unshift({
+            id: Date.now() + Math.random(),
+            userId: customerId,
+            action: 'bulk_email_sent',
+            details: `Bulk email: ${subject}`,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('mtechUserActivities', JSON.stringify(activities));
+    });
 }
+
 function bulkDeleteCustomers() {
-if (selectedCustomers.length === 0) {
-showAdminMessage('Please select customers first', 'error');
-return;
+    if (selectedCustomers.length === 0) {
+        showAdminMessage('Please select customers first', 'error');
+        return;
+    }
+    
+    const confirmation = confirm(
+        `Are you sure you want to delete ${selectedCustomers.length} customer(s)? ` +
+        'This action cannot be undone and will also delete all associated data.'
+    );
+    
+    if (!confirmation) return;
+    
+    try {
+        // Remove customers from all storage locations
+        const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+        const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
+        const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
+        
+        // Filter out deleted customers
+        const filteredUsers = users.filter(user => !selectedCustomers.includes(user.id));
+        const filteredCustomerDb = customerDatabase.filter(customer => !selectedCustomers.includes(customer.id));
+        const filteredActivities = activities.filter(activity => !selectedCustomers.includes(activity.userId));
+        
+        // Save updated data
+        localStorage.setItem('mtechUsers', JSON.stringify(filteredUsers));
+        localStorage.setItem('mtechCustomerDatabase', JSON.stringify(filteredCustomerDb));
+        localStorage.setItem('mtechUserActivities', JSON.stringify(filteredActivities));
+        
+        showAdminMessage(`Successfully deleted ${selectedCustomers.length} customers`, 'success');
+        
+        // Reset selection and reload data
+        selectedCustomers = [];
+        loadCustomers();
+        updateBulkActions();
+        
+    } catch (error) {
+        console.error('Error deleting customers:', error);
+        showAdminMessage('Error deleting customers', 'error');
+    }
 }
-const confirmation = confirm(
-    `Are you sure you want to delete ${selectedCustomers.length} customer(s)? ` +
-    'This action cannot be undone and will also delete all associated data.'
-);
 
-if (!confirmation) return;
-
-try {
-    // Remove customers from all storage locations
-    const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
-    const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
-    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-    
-    // Filter out deleted customers
-    const filteredUsers = users.filter(user => !selectedCustomers.includes(user.id));
-    const filteredCustomerDb = customerDatabase.filter(customer => !selectedCustomers.includes(customer.id));
-    const filteredActivities = activities.filter(activity => !selectedCustomers.includes(activity.userId));
-    
-    // Save updated data
-    localStorage.setItem('mtechUsers', JSON.stringify(filteredUsers));
-    localStorage.setItem('mtechCustomerDatabase', JSON.stringify(filteredCustomerDb));
-    localStorage.setItem('mtechUserActivities', JSON.stringify(filteredActivities));
-    
-    showAdminMessage(`Successfully deleted ${selectedCustomers.length} customers`, 'success');
-    
-    // Reset selection and reload data
-    selectedCustomers = [];
-    loadCustomers();
-    updateBulkActions();
-    
-} catch (error) {
-    console.error('Error deleting customers:', error);
-    showAdminMessage('Error deleting customers', 'error');
-}
-
-}
 // Individual Customer Actions
 function editCustomer(customerId) {
-showAdminMessage('Customer editing feature coming soon!', 'info');
+    showAdminMessage('Customer editing feature coming soon!', 'info');
 }
+
 function emailSingleCustomer(customerId) {
-const customer = allCustomers.find(c => c.id === customerId);
-if (customer) {
-selectedCustomers = [customerId];
-bulkEmailCustomers();
+    const customer = allCustomers.find(c => c.id === customerId);
+    if (customer) {
+        selectedCustomers = [customerId];
+        bulkEmailCustomers();
+    }
 }
-}
+
 function toggleCustomerStatus(customerId) {
-const customer = allCustomers.find(c => c.id === customerId);
-if (!customer) return;
-const newStatus = customer.status === 'active' ? 'inactive' : 'active';
-
-try {
-    // Update in all storage locations
-    const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
-    const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
+    const customer = allCustomers.find(c => c.id === customerId);
+    if (!customer) return;
     
-    // Update users array
-    const userIndex = users.findIndex(u => u.id === customerId);
-    if (userIndex !== -1) {
-        users[userIndex].status = newStatus;
-        localStorage.setItem('mtechUsers', JSON.stringify(users));
+    const newStatus = customer.status === 'active' ? 'inactive' : 'active';
+    
+    try {
+        // Update in all storage locations
+        const users = JSON.parse(localStorage.getItem('mtechUsers')) || [];
+        const customerDatabase = JSON.parse(localStorage.getItem('mtechCustomerDatabase')) || [];
+        
+        // Update users array
+        const userIndex = users.findIndex(u => u.id === customerId);
+        if (userIndex !== -1) {
+            users[userIndex].status = newStatus;
+            localStorage.setItem('mtechUsers', JSON.stringify(users));
+        }
+        
+        // Update customer database
+        const customerIndex = customerDatabase.findIndex(c => c.id === customerId);
+        if (customerIndex !== -1) {
+            customerDatabase[customerIndex].status = newStatus;
+            localStorage.setItem('mtechCustomerDatabase', JSON.stringify(customerDatabase));
+        }
+        
+        showAdminMessage(`Customer ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`, 'success');
+        loadCustomers();
+        
+    } catch (error) {
+        console.error('Error updating customer status:', error);
+        showAdminMessage('Error updating customer status', 'error');
     }
-    
-    // Update customer database
-    const customerIndex = customerDatabase.findIndex(c => c.id === customerId);
-    if (customerIndex !== -1) {
-        customerDatabase[customerIndex].status = newStatus;
-        localStorage.setItem('mtechCustomerDatabase', JSON.stringify(customerDatabase));
-    }
-    
-    showAdminMessage(`Customer ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`, 'success');
-    loadCustomers();
-    
-    // Log the status change
-    const activities = JSON.parse(localStorage.getItem('mtechUserActivities')) || [];
-    activities.unshift({
-        id: Date.now(),
-        userId: customerId,
-        action: 'status_changed',
-        details: `Account ${newStatus === 'active' ? 'activated' : 'deactivated'} by admin`,
-        timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('mtechUserActivities', JSON.stringify(activities));
-    
-} catch (error) {
-    console.error('Error updating customer status:', error);
-    showAdminMessage('Error updating customer status', 'error');
 }
 
-}
+// === UTILITY FUNCTIONS ===
+
 // Utility Functions
 function getCustomerInitials(name) {
-if (!name) return '??';
-const names = name.split(' ');
-return names.length >= 2
-? (names[0][0] + names[1][0]).toUpperCase()
-: name.substring(0, 2).toUpperCase();
+    if (!name) return '??';
+    const names = name.split(' ');
+    return names.length >= 2 
+        ? (names[0][0] + names[1][0]).toUpperCase()
+        : name.substring(0, 2).toUpperCase();
 }
+
 function formatMobile(mobile) {
-if (!mobile) return 'Not provided';
-// Format as +XX XXXXX XXXXX
-if (mobile.length > 10) {
-const countryCode = mobile.substring(0, mobile.length - 10);
-const number = mobile.substring(mobile.length - 10);
-return ${countryCode} ${number.substring(0, 5)} ${number.substring(5)};
+    if (!mobile) return 'Not provided';
+    // Format as +XX XXXXX XXXXX
+    if (mobile.length > 10) {
+        const countryCode = mobile.substring(0, mobile.length - 10);
+        const number = mobile.substring(mobile.length - 10);
+        return `${countryCode} ${number.substring(0, 5)} ${number.substring(5)}`;
+    }
+    return mobile;
 }
-return mobile;
-}
+
 function formatDate(dateString) {
-if (!dateString) return 'N/A';
-return new Date(dateString).toLocaleDateString('en-US', {
-year: 'numeric',
-month: 'short',
-day: 'numeric'
-});
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
 }
+
 function getTimeAgo(dateString) {
-if (!dateString) return '';
-const now = new Date();
-const date = new Date(dateString);
-const diff = now - date;
-const seconds = Math.floor(diff / 1000);
-const minutes = Math.floor(seconds / 60);
-const hours = Math.floor(minutes / 60);
-const days = Math.floor(hours / 24);
-
-if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-return 'Just now';
-
-}
-function calculateAge(birthDate) {
-const today = new Date();
-const birth = new Date(birthDate);
-let age = today.getFullYear() - birth.getFullYear();
-const monthDiff = today.getMonth() - birth.getMonth();
-if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
+    if (!dateString) return '';
+    const now = new Date();
+    const date = new Date(dateString);
+    const diff = now - date;
+    
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return 'Just now';
 }
 
-return `${age} years old`;
-
-}
 function getStatusDisplay(customer) {
-const status = customer.status || 'active';
-const displayStatus = capitalizeFirst(status);
-if (!customer.verified && !customer.mobileVerified) {
-    return 'Unverified';
+    const status = customer.status || 'active';
+    const displayStatus = capitalizeFirst(status);
+    
+    if (!customer.verified && !customer.mobileVerified) {
+        return 'Unverified';
+    }
+    
+    return displayStatus;
 }
 
-return displayStatus;
-
-}
 function capitalizeFirst(str) {
-if (!str) return '';
-return str.charAt(0).toUpperCase() + str.slice(1);
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function getActivityIcon(action) {
-const icons = {
-'account_created': '🆕',
-'login': '🔓',
-'logout': '🔒',
-'profile_updated': '✏️',
-'mobile_verified': '✅',
-'password_changed': '🔐',
-'order_placed': '🛒',
-'status_changed': '⚙️',
-'bulk_email_sent': '📧'
-};
-return icons[action] || '📝';
-}
+
 function getActivityDescription(action, details) {
-const descriptions = {
-'account_created': 'created their account',
-'login': 'logged in',
-'logout': 'logged out',
-'profile_updated': 'updated their profile',
-'mobile_verified': 'verified their mobile number',
-'password_changed': 'changed their password',
-'order_placed': 'placed an order',
-'status_changed': details || 'status was changed',
-'bulk_email_sent': details || 'received a bulk email'
-};
-return descriptions[action] || details || action;
+    const descriptions = {
+        'account_created': 'created their account',
+        'login': 'logged in',
+        'logout': 'logged out',
+        'profile_updated': 'updated their profile',
+        'mobile_verified': 'verified their mobile number',
+        'password_changed': 'changed their password',
+        'order_placed': 'placed an order',
+        'status_changed': details || 'status was changed',
+        'bulk_email_sent': details || 'received a bulk email'
+    };
+    return descriptions[action] || details || action;
 }
+
 function downloadCSV(content, filename) {
-const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-const link = document.createElement('a');
-if (link.download !== undefined) {
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
-}
 function debounce(func, wait) {
-let timeout;
-return function executedFunction(...args) {
-const later = () => {
-clearTimeout(timeout);
-func(...args);
-};
-clearTimeout(timeout);
-timeout = setTimeout(later, wait);
-};
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
+
 function showAdminMessage(message, type = 'info') {
-// Remove existing messages
-document.querySelectorAll('.admin-toast').forEach(toast => toast.remove());
-const toast = document.createElement('div');
-toast.className = `admin-toast ${type}-toast`;
-toast.textContent = message;
-toast.style.cssText = `
-    position: fixed; top: 20px; right: 20px; z-index: 10000;
-    padding: 1rem 2rem; border-radius: 8px; font-weight: 500;
-    max-width: 400px; word-wrap: break-word;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    ${type === 'success' ? 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;' : 
-      type === 'error' ? 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;' :
-      'background: #cce5ff; color: #004085; border-left: 4px solid #007bff;'}
-`;
-
-document.body.appendChild(toast);
-setTimeout(() => toast.remove(), 5000);
-
+    // Remove existing messages
+    document.querySelectorAll('.admin-toast').forEach(toast => toast.remove());
+    
+    const toast = document.createElement('div');
+    toast.className = `admin-toast ${type}-toast`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 10000;
+        padding: 1rem 2rem; border-radius: 8px; font-weight: 500;
+        max-width: 400px; word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        ${type === 'success' ? 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;' : 
+          type === 'error' ? 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;' :
+          'background: #cce5ff; color: #004085; border-left: 4px solid #007bff;'}
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
 }
+
 // Modal Functions
 function closeCustomerDetailsModal() {
-document.getElementById('customerDetailsModal').style.display = 'none';
-currentCustomer = null;
+    document.getElementById('customerDetailsModal').style.display = 'none';
+    currentCustomer = null;
 }
+
 function closeBulkEmailModal() {
-document.getElementById('bulkEmailModal').style.display = 'none';
-document.getElementById('bulkEmailForm').reset();
+    document.getElementById('bulkEmailModal').style.display = 'none';
+    document.getElementById('bulkEmailForm').reset();
 }
+
 // Refresh customers data
 function refreshCustomers() {
-loadCustomers();
-showAdminMessage('Customer data refreshed', 'success');
+    loadCustomers();
+    showAdminMessage('Customer data refreshed', 'success');
 }
-// Initialize when admin section loads
-if (typeof initializeCustomerManagement !== 'undefined') {
-// Add to existing admin initialization
-document.addEventListener('DOMContentLoaded', function() {
-if (document.getElementById('customers')) {
-initializeCustomerManagement();
+
+function refreshDashboard() {
+    loadDashboard();
+    showAdminMessage('Dashboard data refreshed', 'success');
 }
-});
+
+// Export data
+function exportData() {
+    showAdminMessage('Export feature coming soon!', 'info');
 }
-// Export functions for global access
+
+// Logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        window.location.href = 'index.html';
+    }
+}
+
+// Helper functions for form management
+function resetAddProductForm() {
+    const form = document.getElementById('addProductForm');
+    if (form) {
+        form.reset();
+        // Reset checkboxes to default state
+        document.getElementById('productInStock').checked = true;
+        document.getElementById('productFeatured').checked = false;
+        document.getElementById('productBestSeller').checked = false;
+    }
+}
+
+function resetForm() {
+    resetAddProductForm();
+}
+
+function previewProduct() {
+    showAdminMessage('Product preview feature coming soon!', 'info');
+}
+
+// Product management functions
+function editProduct(productId) {
+    showAdminMessage('Product editing feature coming soon!', 'info');
+}
+
+function deleteProduct(productId) {
+    if (confirm('Are you sure you want to delete this product?')) {
+        const products = adminDataManager.getProducts();
+        const filteredProducts = products.filter(p => p.id !== productId);
+        adminDataManager.saveProducts(filteredProducts);
+        loadProducts();
+        loadDashboard();
+        showAdminMessage('Product deleted successfully', 'success');
+    }
+}
+
+function showAddProduct() {
+    // Switch to add product section
+    document.querySelectorAll('.admin-nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === 'add-product') {
+            link.classList.add('active');
+        }
+    });
+    
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    document.getElementById('add-product').classList.add('active');
+    loadAddProductForm();
+}
+
+// Category management functions
+function editCategory(categoryId) {
+    showAdminMessage('Category editing feature coming soon!', 'info');
+}
+
+function deleteCategory(categoryId) {
+    showAdminMessage('Category deletion feature coming soon!', 'info');
+}
+
+function addCategory() {
+    showAdminMessage('Add category feature coming soon!', 'info');
+}
+
+// Order management functions
+function viewOrder(orderId) {
+    showAdminMessage('Order viewing feature coming soon!', 'info');
+}
+
+function updateOrderStatus(orderId) {
+    showAdminMessage('Order status update feature coming soon!', 'info');
+}
+
+function exportOrders() {
+    showAdminMessage('Order export feature coming soon!', 'info');
+}
+
+function exportProducts() {
+    showAdminMessage('Product export feature coming soon!', 'info');
+}
+
+// Global access functions
 window.searchCustomers = searchCustomers;
 window.filterCustomers = filterCustomers;
 window.sortCustomers = sortCustomers;
@@ -1153,3 +1267,4 @@ window.bulkDeleteCustomers = bulkDeleteCustomers;
 window.closeCustomerDetailsModal = closeCustomerDetailsModal;
 window.closeBulkEmailModal = closeBulkEmailModal;
 window.refreshCustomers = refreshCustomers;
+window.refreshDashboard = refreshDashboard;
