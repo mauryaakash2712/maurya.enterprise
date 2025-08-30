@@ -117,6 +117,237 @@
         <!-- Admin Main Content -->
         <main class="admin-main">
             <div class="container">
+
+
+Customer Management
+Export Customers Refresh Data
+👥
+Total Customers
+0
+✅
+Verified
+0
+🆕
+New This Month
+0
+🔥
+Active
+0
+Search Customers 
+Status Filter
+Sort By
+Clear Filters
+	Customer	Email	Mobile	Registration	Last Login	Status	Orders	Total Spent	Actions
+
+Loading customers...
+
+
+Recent Customer Activities
+Loading recent activities...
+
+×
+👤
+Customer Name
+email@example.com
+✅ Verified 🔥 Active
+            </div>
+            <div class="customer-actions">
+                <button class="admin-btn secondary" onclick="emailCustomer()">Send Email</button>
+                <button class="admin-btn warning" onclick="toggleCustomerStatus()">Toggle Status</button>
+            </div>
+        </div>
+
+        <div class="customer-details-tabs">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn" data-tab="orders">Orders</button>
+            <button class="tab-btn" data-tab="activity">Activity</button>
+            <button class="tab-btn" data-tab="preferences">Preferences</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="customer-tab-panel active" id="overview">
+            <div class="customer-overview-grid">
+                <div class="overview-section">
+                    <h4>Personal Information</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Full Name:</label>
+                            <span id="detailsFullName">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span id="detailsEmail">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Mobile:</label>
+                            <span id="detailsMobile">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Gender:</label>
+                            <span id="detailsGender">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Date of Birth:</label>
+                            <span id="detailsDOB">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Age:</label>
+                            <span id="detailsAge">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-section">
+                    <h4>Account Information</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Registration Date:</label>
+                            <span id="detailsRegDate">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Last Login:</label>
+                            <span id="detailsLastLogin">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Login Count:</label>
+                            <span id="detailsLoginCount">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Account Status:</label>
+                            <span id="detailsStatus" class="status-badge">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email Verified:</label>
+                            <span id="detailsEmailVerified">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Mobile Verified:</label>
+                            <span id="detailsMobileVerified">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-section">
+                    <h4>Purchase Summary</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total Orders:</label>
+                            <span id="detailsTotalOrders">0</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Total Spent:</label>
+                            <span id="detailsTotalSpent">$0.00</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Average Order Value:</label>
+                            <span id="detailsAverageOrder">$0.00</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Customer Since:</label>
+                            <span id="detailsCustomerSince">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Last Order:</label>
+                            <span id="detailsLastOrder">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Customer Lifetime Value:</label>
+                            <span id="detailsCLV">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div class="customer-tab-panel" id="orders">
+            <div class="customer-orders-header">
+                <h4>Order History</h4>
+                <div class="orders-summary">
+                    <span class="orders-count">Loading orders...</span>
+                </div>
+            </div>
+            <div class="customer-orders-list" id="customerOrdersList">
+                <div class="loading-state">Loading customer orders...</div>
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div class="customer-tab-panel" id="activity">
+            <div class="customer-activity-header">
+                <h4>Recent Activity</h4>
+                <div class="activity-filters">
+                    <select id="activityFilter">
+                        <option value="all">All Activities</option>
+                        <option value="login">Login Events</option>
+                        <option value="order">Order Events</option>
+                        <option value="profile">Profile Changes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="customer-activity-list" id="customerActivityList">
+                <div class="loading-state">Loading customer activities...</div>
+            </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div class="customer-tab-panel" id="preferences">
+            <div class="customer-preferences">
+                <h4>Communication Preferences</h4>
+                <div class="preferences-grid">
+                    <div class="preference-item">
+                        <label>Email Notifications:</label>
+                        <span id="prefEmailNotif">-</span>
+                    </div>
+                    <div class="preference-item">
+                        <label>SMS Notifications:</label>
+                        <span id="prefSMSNotif">-</span>
+                    </div>
+                    <div class="preference-item">
+                        <label>Promotional Emails:</label>
+                        <span id="prefPromoEmails">-</span>
+                    </div>
+                    <div class="preference-item">
+                        <label>Newsletter Subscription:</label>
+                        <span id="prefNewsletter">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="customer-addresses">
+                <h4>Saved Addresses</h4>
+                <div class="addresses-list" id="customerAddressesList">
+                    <p>No addresses saved yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+×
+Send Bulk Email
+Subject 
+            <div class="form-group">
+                <label for="emailMessage">Message</label>
+                <textarea id="emailMessage" rows="8" placeholder="Enter your message..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="includeUnsubscribe" checked>
+                    Include unsubscribe link
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="button" onclick="closeBulkEmailModal()" class="admin-btn secondary">Cancel</button>
+                <button type="submit" class="admin-btn primary">Send Email</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
                 
                 <!-- Dashboard Section -->
                 <section id="dashboard" class="admin-section active">
