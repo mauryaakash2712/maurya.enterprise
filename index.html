@@ -6,332 +6,453 @@
     <title>MTech - Premium Electronics Store</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #007bff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .ownership {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: -5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Search Container */
+        .search-container {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 0.5rem;
+            min-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-category {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-btn {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #e55a2b;
+            transform: scale(1.1);
+        }
+
+        /* User Section Styles */
+        .user-section {
+            position: relative;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .login-btn, .register-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-color: rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .account-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .account-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            min-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .user-menu:hover .user-dropdown,
+        .user-dropdown:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        /* Cart Button */
+        .cart-btn {
+            position: relative;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .cart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Main Content */
+        main {
+            min-height: 80vh;
+            padding: 2rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .search-container {
+                min-width: 300px;
+            }
+
+            .brand-name {
+                font-size: 2rem;
+            }
+
+            .auth-buttons {
+                gap: 0.5rem;
+            }
+
+            .login-btn, .register-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-list {
+                flex-wrap: wrap;
+                padding: 0 1rem;
+            }
+
+            .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1 class="brand-name">MTech</h1>
-                    <span class="ownership">by Maurya Enterprises</span>
-                </div>
-                
-                <!-- Search Bar -->
-                <div class="search-container">
-                    <select class="search-category" id="searchCategory">
-                        <option value="">All Categories</option>
-                    </select>
-                    <input type="text" class="search-input" placeholder="Search for electronics..." id="searchInput">
-                    <button class="search-btn" type="button" id="searchBtn">🔍</button>
-                </div>
-                
-                <!-- Header Actions -->
-                <div class="header-actions">
-                    <button class="account-btn" id="accountBtn">
-                        <span class="account-icon">👤</span>
-                        <span class="account-text">Account</span>
-                        
-
-×
-Sign In to MTech
-Access your account and manage your orders
-Email or Mobile Number 
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <div class="password-container">
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">👁️</button>
-                </div>
+        <div class="header-content">
+            <div class="logo">
+                <h1 class="brand-name">MTech</h1>
+                <span class="ownership">by Maurya Enterprises</span>
             </div>
             
-            <div class="form-options">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="rememberMe">
-                    Remember me
-                </label>
-                <a href="#" onclick="showForgotPassword()" class="forgot-password">Forgot Password?</a>
-            </div>
-            
-            <button type="submit" class="auth-btn primary">Sign In</button>
-        </form>
-        
-        <div class="auth-divider">
-            <span>or</span>
-        </div>
-        
-        <div class="social-login">
-            <button type="button" class="social-btn google-btn" onclick="loginWithGoogle()">
-                <span class="social-icon">G</span>
-                Continue with Google
-            </button>
-            <button type="button" class="social-btn facebook-btn" onclick="loginWithFacebook()">
-                <span class="social-icon">f</span>
-                Continue with Facebook
-            </button>
-        </div>
-        
-        <div class="auth-switch">
-            <p>Don't have an account? <a href="#" onclick="showRegisterModal()">Sign Up</a></p>
-        </div>
-    </div>
-</div>
-
-</div>
-
-×
-Create MTech Account
-Join thousands of satisfied customers
-First Name 
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" placeholder="Doe" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="registerEmail">Email Address</label>
-                <input type="email" id="registerEmail" placeholder="john@example.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="registerMobile">Mobile Number</label>
-                <div class="mobile-input">
-                    <select class="country-code" id="countryCode">
-                        <option value="+1">🇺🇸 +1</option>
-                        <option value="+91" selected>🇮🇳 +91</option>
-                        <option value="+44">🇬🇧 +44</option>
-                        <option value="+86">🇨🇳 +86</option>
-                        <option value="+81">🇯🇵 +81</option>
-                        <option value="+49">🇩🇪 +49</option>
-                        <option value="+33">🇫🇷 +33</option>
-                        <option value="+61">🇦🇺 +61</option>
-                        <option value="+55">🇧🇷 +55</option>
-                        <option value="+7">🇷🇺 +7</option>
-                    </select>
-                    <input type="tel" id="registerMobile" placeholder="9876543210" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="registerPassword">Password</label>
-                <div class="password-container">
-                    <input type="password" id="registerPassword" placeholder="Create a strong password" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">👁️</button>
-                </div>
-                <div class="password-strength" id="passwordStrength" style="display: none;">
-                    <div class="strength-bar" id="strengthBar"></div>
-                    <small class="strength-text" id="strengthText">Password strength: Weak</small>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <div class="password-container">
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</button>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="dateOfBirth">Date of Birth (Optional)</label>
-                <input type="date" id="dateOfBirth">
-            </div>
-            
-            <div class="form-group">
-                <label for="gender">Gender (Optional)</label>
-                <select id="gender">
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
+            <!-- Search Bar -->
+            <div class="search-container">
+                <select class="search-category" id="searchCategory">
+                    <option value="">All Categories</option>
                 </select>
+                <input type="text" class="search-input" placeholder="Search for electronics..." id="searchInput">
+                <button class="search-btn" type="button" id="searchBtn">🔍</button>
             </div>
             
-            <div class="form-options">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="agreeTerms" required>
-                    I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="newsletter">
-                    Subscribe to newsletter for offers and updates
-                </label>
-            </div>
-            
-            <button type="submit" class="auth-btn primary">Create Account</button>
-        </form>
-        
-        <div class="auth-divider">
-            <span>or</span>
-        </div>
-        
-        <div class="social-login">
-            <button type="button" class="social-btn google-btn" onclick="registerWithGoogle()">
-                <span class="social-icon">G</span>
-                Sign up with Google
-            </button>
-            <button type="button" class="social-btn facebook-btn" onclick="registerWithFacebook()">
-                <span class="social-icon">f</span>
-                Sign up with Facebook
-            </button>
-        </div>
-        
-        <div class="auth-switch">
-            <p>Already have an account? <a href="#" onclick="showLoginModal()">Sign In</a></p>
-        </div>
-    </div>
-</div>
-
-</div>
-
-×
-Verify Mobile Number
-Enter the 6-digit code sent to your mobile
-     
-            <button type="submit" class="auth-btn primary">Verify OTP</button>
-        </form>
-        
-        <div class="otp-resend">
-            <p class="countdown" id="otpCountdown">Resend OTP in 5:00</p>
-        </div>
-    </div>
-</div>
-
-</div>
-
-×
-My Account
-Profile Orders Addresses Settings
-        <!-- Profile Tab -->
-        <div class="tab-panel active" id="profile">
-            <form class="profile-form" id="profileForm">
-                <h3>Personal Information</h3>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="profileFirstName">First Name</label>
-                        <input type="text" id="profileFirstName" required>
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <!-- User Account Section -->
+                <div class="user-section" id="userSection">
+                    <!-- Logged Out State -->
+                    <div class="auth-buttons" id="authButtons">
+                        <button class="login-btn" id="loginBtn">Sign In</button>
+                        <button class="register-btn" id="registerBtn">Sign Up</button>
                     </div>
-                    <div class="form-group">
-                        <label for="profileLastName">Last Name</label>
-                        <input type="text" id="profileLastName" required>
+                    
+                    <!-- Logged In State -->
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <button class="account-btn" id="accountBtn">
+                            <span class="account-icon">👤</span>
+                            <span class="account-text" id="userWelcome">Account</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-info" id="userInfo">
+                                <div class="user-avatar">👤</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="userName">User</div>
+                                    <div class="user-email" id="userEmail">user@email.com</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="#" id="myAccountLink">My Account</a>
+                                <a href="#" id="orderHistoryLink">Order History</a>
+                                <a href="#" id="wishlistLink">Wishlist</a>
+                                <a href="#" id="logoutBtn">Logout</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="profileEmail">Email Address</label>
-                    <input type="email" id="profileEmail" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="profileMobile">Mobile Number</label>
-                    <input type="tel" id="profileMobile" required>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="profileDOB">Date of Birth</label>
-                        <input type="date" id="profileDOB">
-                    </div>
-                    <div class="form-group">
-                        <label for="profileGender">Gender</label>
-                        <select id="profileGender">
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                            <option value="prefer-not-to-say">Prefer not to say</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <button type="submit" class="auth-btn primary">Update Profile</button>
-            </form>
-        </div>
-        
-        <!-- Orders Tab -->
-        <div class="tab-panel" id="orders">
-            <h3>Order History</h3>
-            <div class="orders-list" id="userOrdersList">
-                <p>Loading orders...</p>
-            </div>
-        </div>
-        
-        <!-- Addresses Tab -->
-        <div class="tab-panel" id="addresses">
-            <div class="addresses-header">
-                <h3>Saved Addresses</h3>
-                <button class="auth-btn secondary" onclick="showAddAddress()">Add New Address</button>
-            </div>
-            <div class="addresses-list" id="userAddressesList">
-                <p>No addresses saved yet.</p>
-            </div>
-        </div>
-        
-        <!-- Settings Tab -->
-        <div class="tab-panel" id="settings">
-            <form class="settings-form" id="settingsForm">
-                <h3>Account Preferences</h3>
-                
-                <div class="preference-item">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="emailNotifications">
-                        Email notifications for orders
-                    </label>
-                </div>
-                
-                <div class="preference-item">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="smsNotifications">
-                        SMS notifications for orders
-                    </label>
-                </div>
-                
-                <div class="preference-item">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="promotionalEmails">
-                        Promotional emails and offers
-                    </label>
-                </div>
-                
-                <button type="submit" class="auth-btn primary">Save Preferences</button>
-            </form>
-            
-            <div class="danger-zone">
-                <h3>Danger Zone</h3>
-                <p>These actions cannot be undone.</p>
-                <button class="auth-btn danger" onclick="deleteAccount()">Delete Account</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-</div>
-
-×
-Reset Password
-Enter your email or mobile number to reset your password
-Email or Mobile Number 
-            <button type="submit" class="auth-btn primary">Send Reset Code</button>
-        </form>
-        
-        <div class="auth-switch">
-            <p>Remember your password? <a href="#" onclick="showLoginModal()">Sign In</a></p>
-        </div>
-    </div>
-</div>
-
-</div>
-                    </button>
-                    <button class="cart-btn" id="cartBtn">
-                        <span class="cart-icon">🛒</span>
-                        <span class="cart-count" id="cartCount">0</span>
-                </div>
+                <!-- Shopping Cart -->
+                <button class="cart-btn" id="cartBtn">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
             </div>
         </div>
         
@@ -340,165 +461,364 @@ Email or Mobile Number
             <div class="container">
                 <ul class="nav-list" id="navList">
                     <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
-                    <!-- Categories will be loaded dynamically -->
                 </ul>
             </div>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <h2 class="hero-title">Latest Electronics & Gadgets</h2>
-                    <p class="hero-subtitle">Discover premium quality electronics at unbeatable prices</p>
-                    <button class="cta-btn">Shop Now</button>
-                </div>
+    <main>
+        <div class="container">
+            <div id="content">
+                <h1>Welcome to MTech</h1>
+                <p>Your premium electronics destination</p>
             </div>
-        </section>
-
-        <!-- Categories Section -->
-        <section class="categories">
-            <div class="container">
-                <h2 class="section-title">Shop by Category</h2>
-                <div class="categories-grid" id="categoriesGrid">
-                    <!-- Categories will be loaded dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Products -->
-        <section class="featured-products">
-            <div class="container">
-                <h2 class="section-title">Featured Products</h2>
-                <div class="products-grid" id="featuredProducts">
-                    <!-- Products will be loaded dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Best Sellers -->
-        <section class="best-sellers">
-            <div class="container">
-                <h2 class="section-title">Best Sellers</h2>
-                <div class="products-grid" id="bestSellers">
-                    <!-- Products will be loaded dynamically -->
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
-    <!-- Product Modal -->
-    <div class="modal" id="productModal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <div class="product-details" id="productDetails">
-                <!-- Product details will be loaded dynamically -->
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content auth-modal">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <div class="auth-container">
+                <h2>Sign In to MTech</h2>
+                <p class="auth-subtitle">Access your account and manage your orders</p>
+                
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginIdentifier">Email or Mobile Number</label>
+                        <input type="text" id="loginIdentifier" placeholder="Enter email or mobile number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            Remember me
+                        </label>
+                        <a href="#" onclick="showForgotPassword()" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn primary">Sign In</button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                
+                <div class="social-login">
+                    <button type="button" class="social-btn google-btn" onclick="loginWithGoogle()">
+                        <span class="social-icon">G</span>
+                        Continue with Google
+                    </button>
+                    <button type="button" class="social-btn facebook-btn" onclick="loginWithFacebook()">
+                        <span class="social-icon">f</span>
+                        Continue with Facebook
+                    </button>
+                </div>
+                
+                <div class="auth-switch">
+                    <p>Don't have an account? <a href="#" onclick="showRegisterModal()">Sign Up</a></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>Shopping Cart</h3>
-            <button class="close-cart" id="closeCart">&times;</button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <!-- Cart items will be loaded dynamically -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <strong>Total: $<span id="cartTotal">0.00</span></strong>
+    <!-- Registration Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content auth-modal">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <div class="auth-container">
+                <h2>Create MTech Account</h2>
+                <p class="auth-subtitle">Join thousands of satisfied customers</p>
+                
+                <form class="auth-form" id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" placeholder="John" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" placeholder="john@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerMobile">Mobile Number</label>
+                        <div class="mobile-input">
+                            <select class="country-code" id="countryCode">
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+91" selected>🇮🇳 +91</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+86">🇨🇳 +86</option>
+                                <option value="+81">🇯🇵 +81</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="+33">🇫🇷 +33</option>
+                                <option value="+61">🇦🇺 +61</option>
+                                <option value="+55">🇧🇷 +55</option>
+                                <option value="+7">🇷🇺 +7</option>
+                            </select>
+                            <input type="tel" id="registerMobile" placeholder="9876543210" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="registerPassword" placeholder="Create a strong password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">👁️</button>
+                        </div>
+                        <div class="password-strength" id="passwordStrength" style="display: none;">
+                            <div class="strength-bar" id="strengthBar"></div>
+                            <small class="strength-text" id="strengthText">Password strength: Weak</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="password-container">
+                            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth (Optional)</label>
+                        <input type="date" id="dateOfBirth">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender (Optional)</label>
+                        <select id="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" required>
+                            I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newsletter">
+                            Subscribe to newsletter for offers and updates
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn primary">Create Account</button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                
+                <div class="social-login">
+                    <button type="button" class="social-btn google-btn" onclick="registerWithGoogle()">
+                        <span class="social-icon">G</span>
+                        Sign up with Google
+                    </button>
+                    <button type="button" class="social-btn facebook-btn" onclick="registerWithFacebook()">
+                        <span class="social-icon">f</span>
+                        Sign up with Facebook
+                    </button>
+                </div>
+                
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" onclick="showLoginModal()">Sign In</a></p>
+                </div>
             </div>
-            <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
         </div>
     </div>
 
-    <!-- Checkout Modal -->
-    <div class="modal" id="checkoutModal">
-        <div class="modal-content checkout-content">
-            <span class="close" onclick="document.getElementById('checkoutModal').style.display='none'">&times;</span>
-            <h2>Checkout</h2>
-            <form class="checkout-form" id="checkoutForm">
-                <div class="form-group">
-                    <label for="customerName">Full Name</label>
-                    <input type="text" id="customerName" required>
+    <!-- OTP Verification Modal -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content auth-modal">
+            <span class="close" onclick="closeOtpModal()">&times;</span>
+            <div class="auth-container">
+                <h2>Verify Mobile Number</h2>
+                <p class="auth-subtitle" id="otpMessage">Enter the 6-digit code sent to your mobile</p>
+                
+                <form class="auth-form" id="otpForm">
+                    <div class="otp-container">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    </div>
+                    
+                    <button type="submit" class="auth-btn primary">Verify OTP</button>
+                </form>
+                
+                <div class="otp-resend">
+                    <p class="countdown" id="otpCountdown">Resend OTP in 5:00</p>
                 </div>
-                <div class="form-group">
-                    <label for="customerEmail">Email</label>
-                    <input type="email" id="customerEmail" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Account Modal -->
+    <div class="modal" id="userAccountModal">
+        <div class="modal-content account-modal">
+            <span class="close" onclick="closeUserAccountModal()">&times;</span>
+            <div class="account-container">
+                <h2>My Account</h2>
+                
+                <div class="account-tabs">
+                    <button class="tab-btn active" data-tab="profile">Profile</button>
+                    <button class="tab-btn" data-tab="orders">Orders</button>
+                    <button class="tab-btn" data-tab="addresses">Addresses</button>
+                    <button class="tab-btn" data-tab="settings">Settings</button>
                 </div>
-                <div class="form-group">
-                    <label for="customerPhone">Phone</label>
-                    <input type="tel" id="customerPhone" required>
+                
+                <!-- Profile Tab -->
+                <div class="tab-panel active" id="profile">
+                    <form class="profile-form" id="profileForm">
+                        <h3>Personal Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profileFirstName">First Name</label>
+                                <input type="text" id="profileFirstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileLastName">Last Name</label>
+                                <input type="text" id="profileLastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileEmail">Email Address</label>
+                            <input type="email" id="profileEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileMobile">Mobile Number</label>
+                            <input type="tel" id="profileMobile" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profileDOB">Date of Birth</label>
+                                <input type="date" id="profileDOB">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileGender">Gender</label>
+                                <select id="profileGender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn primary">Update Profile</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="customerAddress">Address</label>
-                    <textarea id="customerAddress" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="paymentMethod">Payment Method</label>
-                    <select id="paymentMethod" required>
-                        <option value="">Select Payment Method</option>
-                        <option value="card">Credit/Debit Card</option>
-                        <option value="upi">UPI</option>
-                        <option value="netbanking">Net Banking</option>
-                        <option value="cod">Cash on Delivery</option>
-                    </select>
-                </div>
-                <div class="order-summary">
-                    <h3>Order Summary</h3>
-                    <div class="summary-items" id="summaryItems"></div>
-                    <div class="summary-total">
-                        <strong>Total: $<span id="summaryTotal">0.00</span></strong>
+                
+                <!-- Orders Tab -->
+                <div class="tab-panel" id="orders">
+                    <h3>Order History</h3>
+                    <div class="orders-list" id="userOrdersList">
+                        <p>Loading orders...</p>
                     </div>
                 </div>
-                <button type="submit" class="place-order-btn">Place Order</button>
-            </form>
+                
+                <!-- Addresses Tab -->
+                <div class="tab-panel" id="addresses">
+                    <div class="addresses-header">
+                        <h3>Saved Addresses</h3>
+                        <button class="auth-btn secondary" onclick="showAddAddress()">Add New Address</button>
+                    </div>
+                    <div class="addresses-list" id="userAddressesList">
+                        <p>No addresses saved yet.</p>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div class="tab-panel" id="settings">
+                    <form class="settings-form" id="settingsForm">
+                        <h3>Account Preferences</h3>
+                        
+                        <div class="preference-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="emailNotifications">
+                                Email notifications for orders
+                            </label>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="smsNotifications">
+                                SMS notifications for orders
+                            </label>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="promotionalEmails">
+                                Promotional emails and offers
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn primary">Save Preferences</button>
+                    </form>
+                    
+                    <div class="danger-zone">
+                        <h3>Danger Zone</h3>
+                        <p>These actions cannot be undone.</p>
+                        <button class="auth-btn danger" onclick="deleteAccount()">Delete Account</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About MTech</h3>
-                    <p>Your trusted partner for premium electronics and gadgets.</p>
-                    <p class="brand-ownership"><strong>MTech</strong> is a registered brand owned by <strong>Maurya Enterprises</strong>.</p>
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content auth-modal">
+            <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
+            <div class="auth-container">
+                <h2>Reset Password</h2>
+                <p class="auth-subtitle">Enter your email or mobile number to reset your password</p>
+                
+                <form class="auth-form" id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="resetIdentifier">Email or Mobile Number</label>
+                        <input type="text" id="resetIdentifier" placeholder="Enter email or mobile number" required>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn primary">Send Reset Code</button>
+                </form>
+                
+                <div class="auth-switch">
+                    <p>Remember your password? <a href="#" onclick="showLoginModal()">Sign In</a></p>
                 </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Categories</h4>
-                    <ul id="footerCategories">
-                        <!-- Categories will be loaded dynamically -->
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact Info</h4>
-                    <p>📧 info@mtech.com</p>
-                    <p>📞 +91 98765 43210</p>
-                    <p>📍 Delhi, India</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Maurya Enterprises. All Rights Reserved.</p>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script src="customer.js"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>
