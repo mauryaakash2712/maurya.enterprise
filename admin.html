@@ -4,984 +4,1207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MTech Admin Panel</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="auth.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #007bff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--text-color);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .admin-header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .admin-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .admin-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .admin-btn.danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .admin-nav {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .admin-nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-nav-link {
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .admin-nav-link:hover,
+        .admin-nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .admin-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+
+        .stat-content h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* Table Styles */
+        .admin-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Customer Management Specific Styles */
+        .customer-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .customer-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .customers-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .customer-avatar-small {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .customer-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .verified-badge {
+            color: var(--success-color);
+            margin-left: 0.5rem;
+        }
+
+        .status-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge.new {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .badge.active {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .view-btn {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .edit-btn {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .email-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .disable-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .enable-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .bulk-actions-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Customer Activities */
+        .customer-activities {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .activities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Customer Details Modal */
+        .customer-details-modal {
+            max-width: 1000px;
+        }
+
+        .customer-details-header {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .customer-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .customer-details-tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active,
+        .tab-btn:hover {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .customer-tab-panel {
+            display: none;
+        }
+
+        .customer-tab-panel.active {
+            display: block;
+        }
+
+        .customer-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .overview-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .overview-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        /* Form Styles */
+        .add-product-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-group label {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .customer-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-nav-list {
+                justify-content: space-around;
+            }
+
+            .admin-nav-link {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+    </style>
 </head>
-<body class="admin-body" id="adminBody">
-    
-    <!-- Admin Login Screen (shown before authentication) -->
-    <div class="admin-login-screen" id="adminLoginScreen">
-        <div class="admin-login-container">
-            <div class="admin-login-card">
-                <div class="admin-logo">
-                    <h1>MTech Admin Panel</h1>
-                    <p>Secure Access Portal</p>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-brand">
+            <h1>MTech Admin Panel</h1>
+            <div class="subtitle">Product & Inventory Management</div>
+        </div>
+        <div class="admin-actions">
+            <div class="admin-user-info">
+                <span class="admin-user">admin</span>
+                <span>Logged in: <span id="loginTime"></span></span>
+            </div>
+            <a href="index.html" class="admin-btn secondary">View Customer Site</a>
+            <button class="admin-btn" onclick="exportData()">Export Data</button>
+            <button class="admin-btn danger" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+        <ul class="admin-nav-list">
+            <li><a href="#" class="admin-nav-link active" data-section="dashboard">Dashboard</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="products">Products</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="categories">Categories</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="orders">Orders</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="customers">Customers</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="add-product">Add Product</a></li>
+            <li><a href="#" class="admin-nav-link" data-section="settings">Settings</a></li>
+        </ul>
+    </nav>
+
+    <!-- Admin Content -->
+    <main class="admin-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <div class="section-header">
+                <h2>Dashboard Overview</h2>
+                <button class="admin-btn" onclick="refreshDashboard()">Refresh Data</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-content">
+                        <h3>Total Products</h3>
+                        <div class="stat-number" id="totalProducts">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📂</div>
+                    <div class="stat-content">
+                        <h3>Total Categories</h3>
+                        <div class="stat-number" id="totalCategories">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3>Total Customers</h3>
+                        <div class="stat-number" id="totalCustomers">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-content">
+                        <h3>Total Orders</h3>
+                        <div class="stat-number" id="totalOrders">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h3>Recent Activity</h3>
+            </div>
+            <div id="recentActivity" class="recent-activity">
+                <p>Loading recent activity...</p>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="admin-section">
+            <div class="section-header">
+                <h2>Products Management</h2>
+                <button class="admin-btn" onclick="exportProducts()">Export Products</button>
+            </div>
+            
+            <div class="products-grid" id="productsGrid">
+                <p>Loading products...</p>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="admin-section">
+            <div class="section-header">
+                <h2>Categories Management</h2>
+                <button class="admin-btn" onclick="addCategory()">Add Category</button>
+            </div>
+            
+            <div class="categories-grid" id="categoriesGrid">
+                <p>Loading categories...</p>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="admin-section">
+            <div class="section-header">
+                <h2>Orders Management</h2>
+                <button class="admin-btn" onclick="exportOrders()">Export Orders</button>
+            </div>
+            
+            <div class="orders-list" id="ordersList">
+                <p>Loading orders...</p>
+            </div>
+        </section>
+
+        <!-- Customers Section -->
+        <section id="customers" class="admin-section">
+            <div class="section-header">
+                <h2>Customer Management</h2>
+                <div class="customers-actions">
+                    <button type="button" class="admin-btn secondary" onclick="exportCustomers()">Export Customers</button>
+                    <button type="button" class="admin-btn" onclick="refreshCustomers()">Refresh Data</button>
+                </div>
+            </div>
+
+            <!-- Customer Stats -->
+            <div class="customer-stats-grid">
+                <div class="stat-card total-customers">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3>Total Customers</h3>
+                        <div class="stat-number" id="totalCustomersCount">0</div>
+                    </div>
                 </div>
                 
-                <form class="admin-login-form" id="adminAccessForm">
-                    <div class="form-group">
-                        <label for="adminUser">Username</label>
-                        <input type="text" id="adminUser" placeholder="Enter admin username" required>
+                <div class="stat-card verified-customers">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3>Verified</h3>
+                        <div class="stat-number" id="verifiedCustomersCount">0</div>
                     </div>
+                </div>
+                
+                <div class="stat-card new-customers">
+                    <div class="stat-icon">🆕</div>
+                    <div class="stat-content">
+                        <h3>New This Month</h3>
+                        <div class="stat-number" id="newCustomersCount">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card active-customers">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                        <h3>Active</h3>
+                        <div class="stat-number" id="activeCustomersCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Filters -->
+            <div class="customer-filters">
+                <div class="filter-group">
+                    <label for="customerSearch">Search Customers</label>
+                    <input type="text" id="customerSearch" placeholder="Search by name, email, or mobile..." onkeyup="searchCustomers()">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="customerStatus">Status Filter</label>
+                    <select id="customerStatus" onchange="filterCustomers()">
+                        <option value="all">All Customers</option>
+                        <option value="verified">Verified Only</option>
+                        <option value="unverified">Unverified Only</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="customerSort">Sort By</label>
+                    <select id="customerSort" onchange="sortCustomers()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="name-desc">Name Z-A</option>
+                        <option value="login">Last Login</option>
+                        <option value="orders">Most Orders</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button type="button" class="admin-btn secondary" onclick="clearCustomerFilters()">Clear Filters</button>
+                </div>
+            </div>
+
+            <!-- Customers Table -->
+            <div class="customers-table-container">
+                <table class="admin-table customers-table" id="customersTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAllCustomers" onchange="toggleSelectAllCustomers()">
+                            </th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Registration</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Orders</th>
+                            <th>Total Spent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 2rem;">
+                                <div class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Loading customers...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" id="bulkActions" style="display: none;">
+                <div class="bulk-actions-info">
+                    <span id="selectedCount">0</span> customer(s) selected
+                </div>
+                <div class="bulk-actions-buttons">
+                    <button class="admin-btn secondary" onclick="bulkExportCustomers()">Export Selected</button>
+                    <button class="admin-btn warning" onclick="bulkEmailCustomers()">Send Email</button>
+                    <button class="admin-btn danger" onclick="bulkDeleteCustomers()">Delete Selected</button>
+                </div>
+            </div>
+
+            <!-- Customer Activities -->
+            <div class="customer-activities">
+                <h3>Recent Customer Activities</h3>
+                <div class="activities-list" id="customerActivitiesList">
+                    <div class="activity-item loading">
+                        Loading recent activities...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Product Section -->
+        <section id="add-product" class="admin-section">
+            <div class="section-header">
+                <h2>Add New Product</h2>
+                <div class="form-actions-header">
+                    <button type="button" class="admin-btn secondary" onclick="resetForm()">Clear Form</button>
+                    <button type="button" class="admin-btn" onclick="previewProduct()">Preview Product</button>
+                </div>
+            </div>
+
+            <div class="add-product-container">
+                <form class="add-product-form" id="addProductForm">
                     
-                    <div class="form-group">
-                        <label for="adminPass">Password</label>
-                        <div class="password-container">
-                            <input type="password" id="adminPass" placeholder="Enter admin password" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('adminPass')">👁️</button>
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productName">Product Name *</label>
+                                <input type="text" id="productName" placeholder="e.g., iPhone 15 Pro Max" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productBrand">Brand *</label>
+                                <input type="text" id="productBrand" placeholder="e.g., Apple" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productCategory">Category *</label>
+                                <select id="productCategory" required>
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="productPrice">Price ($) *</label>
+                                <input type="number" id="productPrice" min="0" step="0.01" placeholder="999.99" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productOriginalPrice">Original Price ($)</label>
+                                <input type="number" id="productOriginalPrice" min="0" step="0.01" placeholder="1199.99">
+                            </div>
+                            <div class="form-group">
+                                <label for="productRating">Rating (1-5)</label>
+                                <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.5">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productReviews">Number of Reviews</label>
+                                <input type="number" id="productReviews" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="productImage">Product Image URL</label>
+                                <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="adminSecret">Secret Key (Optional)</label>
-                        <input type="password" id="adminSecret" placeholder="Enter secret key for enhanced security">
+                    <!-- Description -->
+                    <div class="form-section">
+                        <h3>Product Description</h3>
+                        <div class="form-group">
+                            <label for="productDescription">Description *</label>
+                            <textarea id="productDescription" rows="6" placeholder="Enter detailed product description..." required></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="rememberDevice">
-                            <span>Remember this device for 7 days</span>
-                        </label>
+                    <!-- Settings -->
+                    <div class="form-section">
+                        <h3>Product Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="productInStock" checked>
+                                    <span>In Stock</span>
+                                </label>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="productFeatured">
+                                    <span>Featured Product</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="productBestSeller">
+                                    <span>Best Seller</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     
-                    <button type="submit" class="admin-access-btn">Access Admin Panel</button>
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="admin-btn secondary" onclick="resetAddProductForm()">Reset Form</button>
+                        <button type="submit" class="admin-btn primary">Add Product</button>
+                    </div>
+                    
                 </form>
-                
-                <div class="admin-info">
-                    <div class="security-notice">
-                        <h4>🔒 Security Notice</h4>
-                        <ul>
-                            <li>Admin access is logged and monitored</li>
-                            <li>Use strong credentials for security</li>
-                            <li>Never share admin credentials</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="default-credentials">
-                        <h4>Default Credentials (Change After First Login)</h4>
-                        <p><strong>Username:</strong> <code>admin</code></p>
-                        <p><strong>Password:</strong> <code>MTech@123</code></p>
-                        <p><strong>Secret Key:</strong> <code>SecureKey2025</code> (optional)</p>
-                    </div>
-                </div>
-                
-                <div class="back-to-store">
-                    <a href="customer.html">← Back to Customer Store</a>
-                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Main Admin Interface (shown after authentication) -->
-    <div class="admin-interface" id="adminInterface" style="display: none;">
-        <!-- Admin Header -->
-        <header class="admin-header">
-            <div class="container">
-                <div class="admin-header-content">
-                    <div class="admin-logo">
-                        <h1>MTech Admin Panel</h1>
-                        <span>Product & Inventory Management</span>
-                    </div>
-                    <div class="admin-user-section">
-                        <div class="admin-user-info">
-                            <span class="admin-user-name" id="adminUserName">Admin User</span>
-                            <span class="admin-login-time" id="adminLoginTime"></span>
-                        </div>
-                        <div class="admin-actions">
-                           <a href="./" class="admin-btn">View Customer Site</a>
-                            <button class="admin-btn" onclick="exportData()">Export Data</button>
-                            <button class="admin-btn danger" onclick="adminLogout()">Logout</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Settings Section -->
+        <section id="settings" class="admin-section">
+            <div class="section-header">
+                <h2>Settings</h2>
             </div>
-        </header>
-
-        <!-- Admin Navigation -->
-        <nav class="admin-nav">
-            <div class="container">
-                <ul class="admin-nav-list">
-                    <li><a href="#" class="admin-nav-link active" data-section="dashboard">Dashboard</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="products">Products</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="categories">Categories</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="orders">Orders</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="customers">Customers</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="add-product">Add Product</a></li>
-                    <li><a href="#" class="admin-nav-link" data-section="settings">Settings</a></li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Admin Main Content -->
-        <main class="admin-main">
-            <div class="container">
-
-
-Customer Management
-Export Customers Refresh Data
-👥
-Total Customers
-0
-✅
-Verified
-0
-🆕
-New This Month
-0
-🔥
-Active
-0
-Search Customers 
-Status Filter
-Sort By
-Clear Filters
-	Customer	Email	Mobile	Registration	Last Login	Status	Orders	Total Spent	Actions
-
-Loading customers...
-
-
-Recent Customer Activities
-Loading recent activities...
-
-×
-👤
-Customer Name
-email@example.com
-✅ Verified 🔥 Active
-            </div>
-            <div class="customer-actions">
-                <button class="admin-btn secondary" onclick="emailCustomer()">Send Email</button>
-                <button class="admin-btn warning" onclick="toggleCustomerStatus()">Toggle Status</button>
-            </div>
-        </div>
-
-        <div class="customer-details-tabs">
-            <button class="tab-btn active" data-tab="overview">Overview</button>
-            <button class="tab-btn" data-tab="orders">Orders</button>
-            <button class="tab-btn" data-tab="activity">Activity</button>
-            <button class="tab-btn" data-tab="preferences">Preferences</button>
-        </div>
-
-        <!-- Overview Tab -->
-        <div class="customer-tab-panel active" id="overview">
-            <div class="customer-overview-grid">
-                <div class="overview-section">
-                    <h4>Personal Information</h4>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Full Name:</label>
-                            <span id="detailsFullName">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Email:</label>
-                            <span id="detailsEmail">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Mobile:</label>
-                            <span id="detailsMobile">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Gender:</label>
-                            <span id="detailsGender">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Date of Birth:</label>
-                            <span id="detailsDOB">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Age:</label>
-                            <span id="detailsAge">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overview-section">
-                    <h4>Account Information</h4>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Registration Date:</label>
-                            <span id="detailsRegDate">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Last Login:</label>
-                            <span id="detailsLastLogin">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Login Count:</label>
-                            <span id="detailsLoginCount">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Account Status:</label>
-                            <span id="detailsStatus" class="status-badge">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Email Verified:</label>
-                            <span id="detailsEmailVerified">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Mobile Verified:</label>
-                            <span id="detailsMobileVerified">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overview-section">
-                    <h4>Purchase Summary</h4>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Total Orders:</label>
-                            <span id="detailsTotalOrders">0</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Total Spent:</label>
-                            <span id="detailsTotalSpent">$0.00</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Average Order Value:</label>
-                            <span id="detailsAverageOrder">$0.00</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Customer Since:</label>
-                            <span id="detailsCustomerSince">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Last Order:</label>
-                            <span id="detailsLastOrder">-</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Customer Lifetime Value:</label>
-                            <span id="detailsCLV">$0.00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Orders Tab -->
-        <div class="customer-tab-panel" id="orders">
-            <div class="customer-orders-header">
-                <h4>Order History</h4>
-                <div class="orders-summary">
-                    <span class="orders-count">Loading orders...</span>
-                </div>
-            </div>
-            <div class="customer-orders-list" id="customerOrdersList">
-                <div class="loading-state">Loading customer orders...</div>
-            </div>
-        </div>
-
-        <!-- Activity Tab -->
-        <div class="customer-tab-panel" id="activity">
-            <div class="customer-activity-header">
-                <h4>Recent Activity</h4>
-                <div class="activity-filters">
-                    <select id="activityFilter">
-                        <option value="all">All Activities</option>
-                        <option value="login">Login Events</option>
-                        <option value="order">Order Events</option>
-                        <option value="profile">Profile Changes</option>
-                    </select>
-                </div>
-            </div>
-            <div class="customer-activity-list" id="customerActivityList">
-                <div class="loading-state">Loading customer activities...</div>
-            </div>
-        </div>
-
-        <!-- Preferences Tab -->
-        <div class="customer-tab-panel" id="preferences">
-            <div class="customer-preferences">
-                <h4>Communication Preferences</h4>
-                <div class="preferences-grid">
-                    <div class="preference-item">
-                        <label>Email Notifications:</label>
-                        <span id="prefEmailNotif">-</span>
-                    </div>
-                    <div class="preference-item">
-                        <label>SMS Notifications:</label>
-                        <span id="prefSMSNotif">-</span>
-                    </div>
-                    <div class="preference-item">
-                        <label>Promotional Emails:</label>
-                        <span id="prefPromoEmails">-</span>
-                    </div>
-                    <div class="preference-item">
-                        <label>Newsletter Subscription:</label>
-                        <span id="prefNewsletter">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="customer-addresses">
-                <h4>Saved Addresses</h4>
-                <div class="addresses-list" id="customerAddressesList">
-                    <p>No addresses saved yet.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-</div>
-
-×
-Send Bulk Email
-Subject 
-            <div class="form-group">
-                <label for="emailMessage">Message</label>
-                <textarea id="emailMessage" rows="8" placeholder="Enter your message..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="includeUnsubscribe" checked>
-                    Include unsubscribe link
-                </label>
-            </div>
-            <div class="form-actions">
-                <button type="button" onclick="closeBulkEmailModal()" class="admin-btn secondary">Cancel</button>
-                <button type="submit" class="admin-btn primary">Send Email</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-</div>
-                
-                <!-- Dashboard Section -->
-                <section id="dashboard" class="admin-section active">
-                    <h2>Dashboard Overview</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Total Products</h3>
-                            <div class="stat-number" id="totalProducts">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Total Categories</h3>
-                            <div class="stat-number" id="totalCategories">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Total Customers</h3>
-                            <div class="stat-number" id="totalCustomers">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Total Orders</h3>
-                            <div class="stat-number" id="totalOrders">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="recent-activity">
-                        <h3>Recent Activity</h3>
-                        <div id="recentActivity" class="activity-list"></div>
-                    </div>
-                </section>
-
-                <!-- Products Section -->
-                <section id="products" class="admin-section">
-                    <div class="section-header">
-                        <h2>Products Management</h2>
-                        <button class="admin-btn" onclick="showAddProduct()">Add New Product</button>
-                    </div>
-                    <div class="products-table-container">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Brand</th>
-                                    <th>Category</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th>Featured</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Categories Section -->
-                <section id="categories" class="admin-section">
-                    <div class="section-header">
-                        <h2>Categories Management</h2>
-                        <button class="admin-btn" onclick="showAddCategory()">Add New Category</button>
-                    </div>
-                    <div class="categories-grid" id="adminCategoriesGrid"></div>
-                </section>
-
-                <!-- Orders Section -->
-                <section id="orders" class="admin-section">
-                    <h2>Orders Management</h2>
-                    <div class="orders-container" id="ordersContainer"></div>
-                </section>
-
-                <!-- Customers Section (NEW) -->
-                <section id="customers" class="admin-section">
-                    <h2>Customer Management</h2>
-                    <div class="customers-container">
-                        <div class="customers-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Mobile</th>
-                                        <th>Registration Date</th>
-                                        <th>Orders</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="customersTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Add Product Section -->
-               <!-- Enhanced Add Product Section for Admin Panel -->
-
-<section id="add-product" class="admin-section">
-    <div class="section-header">
-        <h2>Add New Product</h2>
-        <div class="form-actions-header">
-            <button type="button" class="admin-btn secondary" onclick="resetForm()">Clear Form</button>
-            <button type="button" class="admin-btn" onclick="previewProduct()">Preview Product</button>
-        </div>
-    </div>
-
-    <form class="enhanced-product-form" id="addProductForm">
-        
-        <!-- Basic Information Section -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">📝</span>
-                Basic Information
-            </h3>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productName">Product Name *</label>
-                    <input type="text" id="productName" placeholder="e.g., iPhone 15 Pro Max" required>
-                    <small class="field-hint">Enter the full product name as it will appear to customers</small>
-                </div>
-                <div class="form-group">
-                    <label for="productBrand">Brand *</label>
-                    <input type="text" id="productBrand" placeholder="e.g., Apple" required>
-                    <small class="field-hint">Manufacturer or brand name</small>
-                </div>
+            <div class="settings-content">
+                <p>Settings panel coming soon...</p>
             </div>
+        </section>
+    </main>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productModel">Model Number</label>
-                    <input type="text" id="productModel" placeholder="e.g., A2848">
-                    <small class="field-hint">Official model/part number</small>
-                </div>
-                <div class="form-group">
-                    <label for="productSKU">SKU (Stock Keeping Unit)</label>
-                    <input type="text" id="productSKU" placeholder="e.g., MT-IP15PM-256-TB">
-                    <small class="field-hint">Internal product identifier</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Category & Classification -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">📂</span>
-                Category & Classification
-            </h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productCategory">Primary Category *</label>
-                    <select id="productCategory" required>
-                        <option value="">Select Primary Category</option>
-                    </select>
-                    <small class="field-hint">Main product category</small>
-                </div>
-                <div class="form-group">
-                    <label for="productSubCategory">Sub Category</label>
-                    <input type="text" id="productSubCategory" placeholder="e.g., Flagship Smartphones">
-                    <small class="field-hint">More specific categorization</small>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productTags">Tags</label>
-                    <input type="text" id="productTags" placeholder="e.g., 5G, Premium, Latest, iOS">
-                    <small class="field-hint">Comma-separated keywords for search</small>
-                </div>
-                <div class="form-group">
-                    <label for="productCondition">Condition</label>
-                    <select id="productCondition">
-                        <option value="new">New</option>
-                        <option value="refurbished">Refurbished</option>
-                        <option value="used">Used</option>
-                        <option value="open-box">Open Box</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Description -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">📄</span>
-                Product Description
-            </h3>
-            
-            <div class="form-group full-width">
-                <label for="productShortDescription">Short Description *</label>
-                <textarea id="productShortDescription" rows="2" maxlength="200" placeholder="Brief, compelling product summary (max 200 characters)" required></textarea>
-                <div class="char-counter">
-                    <span id="shortDescCounter">0</span>/200 characters
-                </div>
-                <small class="field-hint">This appears in product cards and search results</small>
-            </div>
-
-            <div class="form-group full-width">
-                <label for="productDescription">Detailed Description *</label>
-                <div class="description-toolbar">
-                    <button type="button" class="format-btn" onclick="formatText('bold')"><strong>B</strong></button>
-                    <button type="button" class="format-btn" onclick="formatText('italic')"><em>I</em></button>
-                    <button type="button" class="format-btn" onclick="formatText('list')">• List</button>
-                    <button type="button" class="format-btn" onclick="addTemplate('features')">Features Template</button>
-                </div>
-                <textarea id="productDescription" rows="8" placeholder="Detailed product description with features, benefits, and specifications..." required></textarea>
-                <small class="field-hint">Comprehensive product information for the product page</small>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productHighlights">Key Highlights</label>
-                    <textarea id="productHighlights" rows="4" placeholder="• Advanced A17 Pro chip&#10;• Professional camera system&#10;• Titanium design&#10;• All-day battery life"></textarea>
-                    <small class="field-hint">Bullet points of main features (one per line)</small>
-                </div>
-                <div class="form-group">
-                    <label for="productWarranty">Warranty Information</label>
-                    <textarea id="productWarranty" rows="4" placeholder="1 Year Limited Warranty&#10;Extended warranty available&#10;International warranty coverage"></textarea>
-                    <small class="field-hint">Warranty terms and coverage details</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Technical Specifications -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">⚙️</span>
-                Technical Specifications
-            </h3>
-            
-            <div class="specifications-container">
-                <div class="spec-categories">
-                    <button type="button" class="spec-category-btn active" data-category="general">General</button>
-                    <button type="button" class="spec-category-btn" data-category="display">Display</button>
-                    <button type="button" class="spec-category-btn" data-category="performance">Performance</button>
-                    <button type="button" class="spec-category-btn" data-category="connectivity">Connectivity</button>
-                    <button type="button" class="spec-category-btn" data-category="physical">Physical</button>
-                </div>
-
-                <div class="spec-panels">
-                    <div class="spec-panel active" id="general-specs">
-                        <h4>General Specifications</h4>
-                        <div class="spec-grid">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Operating System" class="spec-name">
-                                <input type="text" placeholder="iOS 17" class="spec-value">
-                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addSpecificationToCategory('general')" class="add-spec-btn">+ Add General Spec</button>
-                    </div>
-
-                    <div class="spec-panel" id="display-specs">
-                        <h4>Display Specifications</h4>
-                        <div class="spec-grid">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Screen Size" class="spec-name">
-                                <input type="text" placeholder="6.7 inches" class="spec-value">
-                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addSpecificationToCategory('display')" class="add-spec-btn">+ Add Display Spec</button>
-                    </div>
-
-                    <div class="spec-panel" id="performance-specs">
-                        <h4>Performance Specifications</h4>
-                        <div class="spec-grid">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Processor" class="spec-name">
-                                <input type="text" placeholder="A17 Pro chip" class="spec-value">
-                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addSpecificationToCategory('performance')" class="add-spec-btn">+ Add Performance Spec</button>
-                    </div>
-
-                    <div class="spec-panel" id="connectivity-specs">
-                        <h4>Connectivity Specifications</h4>
-                        <div class="spec-grid">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Network" class="spec-name">
-                                <input type="text" placeholder="5G, 4G LTE" class="spec-value">
-                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addSpecificationToCategory('connectivity')" class="add-spec-btn">+ Add Connectivity Spec</button>
-                    </div>
-
-                    <div class="spec-panel" id="physical-specs">
-                        <h4>Physical Specifications</h4>
-                        <div class="spec-grid">
-                            <div class="spec-row">
-                                <input type="text" placeholder="Dimensions" class="spec-name">
-                                <input type="text" placeholder="159.9 x 76.7 x 8.25 mm" class="spec-value">
-                                <button type="button" onclick="removeSpecification(this)" class="remove-spec-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addSpecificationToCategory('physical')" class="add-spec-btn">+ Add Physical Spec</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Images & Media -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">🖼️</span>
-                Images & Media
-            </h3>
-            
-            <div class="image-upload-section">
-                <div class="form-group">
-                    <label for="productMainImage">Main Product Image *</label>
-                    <div class="image-upload-container">
-                        <input type="url" id="productMainImage" placeholder="https://example.com/product-image.jpg" required>
-                        <button type="button" class="upload-btn" onclick="uploadImage('main')">Upload</button>
-                    </div>
-                    <div class="image-preview" id="mainImagePreview"></div>
-                    <small class="field-hint">Primary product image (recommended: 800x800px, JPG/PNG)</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Additional Images</label>
-                    <div class="additional-images" id="additionalImages">
-                        <div class="image-input-row">
-                            <input type="url" placeholder="Image URL" class="additional-image-url">
-                            <button type="button" onclick="addImageRow()" class="add-btn">+</button>
-                            <button type="button" onclick="removeImageRow(this)" class="remove-btn">×</button>
+    <!-- Customer Details Modal -->
+    <div class="modal" id="customerDetailsModal">
+        <div class="modal-content customer-details-modal">
+            <span class="close" onclick="closeCustomerDetailsModal()">&times;</span>
+            <div class="customer-details-container">
+                <div class="customer-details-header">
+                    <div class="customer-avatar" id="customerAvatar">👤</div>
+                    <div class="customer-info">
+                        <h2 id="customerName">Customer Name</h2>
+                        <p id="customerEmail">email@example.com</p>
+                        <div class="customer-badges">
+                            <span class="badge verified" id="verifiedBadge">✅ Verified</span>
+                            <span class="badge active" id="activeBadge">🔥 Active</span>
                         </div>
                     </div>
-                    <small class="field-hint">Additional product images (up to 8 images)</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="productVideo">Product Video URL</label>
-                    <input type="url" id="productVideo" placeholder="https://youtube.com/watch?v=...">
-                    <small class="field-hint">YouTube or Vimeo video URL (optional)</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pricing & Inventory -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">💰</span>
-                Pricing & Inventory
-            </h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productPrice">Selling Price ($) *</label>
-                    <input type="number" id="productPrice" min="0" step="0.01" placeholder="1199.99" required>
-                    <small class="field-hint">Current selling price</small>
-                </div>
-                <div class="form-group">
-                    <label for="productOriginalPrice">Original Price ($)</label>
-                    <input type="number" id="productOriginalPrice" min="0" step="0.01" placeholder="1299.99">
-                    <small class="field-hint">Original/MSRP price (for discount calculation)</small>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productCostPrice">Cost Price ($)</label>
-                    <input type="number" id="productCostPrice" min="0" step="0.01" placeholder="900.00">
-                    <small class="field-hint">Your cost/wholesale price (internal use)</small>
-                </div>
-                <div class="form-group">
-                    <label for="productStock">Stock Quantity</label>
-                    <input type="number" id="productStock" min="0" value="10">
-                    <small class="field-hint">Available inventory count</small>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productMinStock">Minimum Stock Alert</label>
-                    <input type="number" id="productMinStock" min="0" value="5">
-                    <small class="field-hint">Alert when stock falls below this number</small>
-                </div>
-                <div class="form-group">
-                    <label for="productStockStatus">Stock Status</label>
-                    <select id="productStockStatus">
-                        <option value="in-stock">In Stock</option>
-                        <option value="low-stock">Low Stock</option>
-                        <option value="out-of-stock">Out of Stock</option>
-                        <option value="pre-order">Pre-Order</option>
-                        <option value="discontinued">Discontinued</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Variants -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">🔄</span>
-                Product Variants (Optional)
-            </h3>
-            
-            <div class="variants-container">
-                <div class="variant-type-selector">
-                    <label>
-                        <input type="checkbox" id="hasColorVariants"> Color Variants
-                    </label>
-                    <label>
-                        <input type="checkbox" id="hasSizeVariants"> Size/Storage Variants
-                    </label>
-                    <label>
-                        <input type="checkbox" id="hasCustomVariants"> Custom Variants
-                    </label>
-                </div>
-
-                <div class="variants-details" id="variantsDetails" style="display: none;">
-                    <div class="variant-section" id="colorVariants" style="display: none;">
-                        <h4>Color Options</h4>
-                        <div class="color-variants">
-                            <div class="color-variant-row">
-                                <input type="text" placeholder="Color name (e.g., Space Black)" class="color-name">
-                                <input type="color" class="color-picker">
-                                <input type="number" placeholder="Additional price" class="color-price" step="0.01">
-                                <button type="button" onclick="removeVariantRow(this)" class="remove-btn">×</button>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addColorVariant()" class="add-variant-btn">+ Add Color</button>
+                    <div class="customer-actions">
+                        <button class="admin-btn secondary" onclick="emailCustomer()">Send Email</button>
+                        <button class="admin-btn warning" onclick="toggleCustomerStatus()">Toggle Status</button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- SEO & Marketing -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">📈</span>
-                SEO & Marketing
-            </h3>
-            
-            <div class="form-group full-width">
-                <label for="productMetaTitle">SEO Title</label>
-                <input type="text" id="productMetaTitle" maxlength="60" placeholder="iPhone 15 Pro Max - Premium Smartphone | MTech">
-                <div class="char-counter">
-                    <span id="metaTitleCounter">0</span>/60 characters
-                </div>
-                <small class="field-hint">Page title for search engines</small>
-            </div>
-
-            <div class="form-group full-width">
-                <label for="productMetaDescription">SEO Description</label>
-                <textarea id="productMetaDescription" rows="3" maxlength="160" placeholder="Buy iPhone 15 Pro Max with A17 Pro chip, titanium design, and professional camera system. Free shipping on orders over $50."></textarea>
-                <div class="char-counter">
-                    <span id="metaDescCounter">0</span>/160 characters
-                </div>
-                <small class="field-hint">Meta description for search results</small>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="productRating">Average Rating</label>
-                    <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.5">
-                    <small class="field-hint">Initial product rating (1-5 stars)</small>
-                </div>
-                <div class="form-group">
-                    <label for="productReviews">Number of Reviews</label>
-                    <input type="number" id="productReviews" min="0" value="0">
-                    <small class="field-hint">Initial review count</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Status & Visibility -->
-        <div class="form-section">
-            <h3 class="section-title">
-                <span class="section-icon">👁️</span>
-                Product Status & Visibility
-            </h3>
-            
-            <div class="status-grid">
-                <div class="status-group">
-                    <h4>Visibility Settings</h4>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productVisible" checked>
-                        <span class="toggle-slider"></span>
-                        Visible to Customers
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productSearchable" checked>
-                        <span class="toggle-slider"></span>
-                        Searchable
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productInStock" checked>
-                        <span class="toggle-slider"></span>
-                        In Stock
-                    </label>
+                <div class="customer-details-tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="orders">Orders</button>
+                    <button class="tab-btn" data-tab="activity">Activity</button>
+                    <button class="tab-btn" data-tab="preferences">Preferences</button>
                 </div>
 
-                <div class="status-group">
-                    <h4>Special Classifications</h4>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productFeatured">
-                        <span class="toggle-slider"></span>
-                        Featured Product
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productBestSeller">
-                        <span class="toggle-slider"></span>
-                        Best Seller
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productNewArrival">
-                        <span class="toggle-slider"></span>
-                        New Arrival
-                    </label>
-                </div>
-
-                <div class="status-group">
-                    <h4>Promotional Settings</h4>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productOnSale">
-                        <span class="toggle-slider"></span>
-                        On Sale
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productFreeShipping">
-                        <span class="toggle-slider"></span>
-                        Free Shipping
-                    </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="productLimitedOffer">
-                        <span class="toggle-slider"></span>
-                        Limited Time Offer
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions-section">
-            <div class="form-actions">
-                <button type="button" class="form-btn secondary" onclick="resetForm()">
-                    <span class="btn-icon">🔄</span>
-                    Reset Form
-                </button>
-                <button type="button" class="form-btn outline" onclick="saveDraft()">
-                    <span class="btn-icon">💾</span>
-                    Save as Draft
-                </button>
-                <button type="button" class="form-btn preview" onclick="previewProduct()">
-                    <span class="btn-icon">👁️</span>
-                    Preview Product
-                </button>
-                <button type="submit" class="form-btn primary">
-                    <span class="btn-icon">✅</span>
-                    Add Product to Store
-                </button>
-            </div>
-        </div>
-
-    </form>
-</section>
-                <!-- Settings Section (NEW) -->
-                <section id="settings" class="admin-section">
-                    <h2>Admin Settings</h2>
-                    <div class="settings-grid">
-                        <div class="settings-card">
-                            <h3>Change Admin Credentials</h3>
-                            <form class="settings-form" id="adminCredentialsForm">
-                                <div class="form-group">
-                                    <label for="currentAdminPassword">Current Password</label>
-                                    <input type="password" id="currentAdminPassword" required>
+                <!-- Overview Tab -->
+                <div class="customer-tab-panel active" id="overview">
+                    <div class="customer-overview-grid">
+                        <div class="overview-section">
+                            <h4>Personal Information</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Full Name:</label>
+                                    <span id="detailsFullName">-</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="newAdminUsername">New Username</label>
-                                    <input type="text" id="newAdminUsername" placeholder="Leave blank to keep current">
+                                <div class="info-item">
+                                    <label>Email:</label>
+                                    <span id="detailsEmail">-</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="newAdminPassword">New Password</label>
-                                    <input type="password" id="newAdminPassword" placeholder="Leave blank to keep current">
+                                <div class="info-item">
+                                    <label>Mobile:</label>
+                                    <span id="detailsMobile">-</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="newSecretKey">New Secret Key</label>
-                                    <input type="password" id="newSecretKey" placeholder="Leave blank to keep current">
+                                <div class="info-item">
+                                    <label>Gender:</label>
+                                    <span id="detailsGender">-</span>
                                 </div>
-                                <button type="submit" class="admin-btn">Update Credentials</button>
-                            </form>
-                        </div>
-                        
-                        <div class="settings-card">
-                            <h3>Security Settings</h3>
-                            <div class="security-options">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="requireSecretKey">
-                                    <span>Require secret key for login</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="enableSessionTimeout">
-                                    <span>Auto-logout after 30 minutes</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="logAdminActions">
-                                    <span>Log all admin actions</span>
-                                </label>
                             </div>
                         </div>
-                        
-                        <div class="settings-card">
-                            <h3>Data Management</h3>
-                            <div class="data-actions">
-                                <button class="admin-btn" onclick="exportAllData()">Export All Data</button>
-                                <button class="admin-btn secondary" onclick="importData()">Import Data</button>
-                                <button class="admin-btn danger" onclick="clearAllData()">Clear All Data</button>
+
+                        <div class="overview-section">
+                            <h4>Account Information</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Registration Date:</label>
+                                    <span id="detailsRegDate">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Last Login:</label>
+                                    <span id="detailsLastLogin">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Account Status:</label>
+                                    <span id="detailsStatus" class="status-badge">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Mobile Verified:</label>
+                                    <span id="detailsMobileVerified">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
+                <!-- Other tabs content will be loaded dynamically -->
+                <div class="customer-tab-panel" id="orders">
+                    <h4>Order History</h4>
+                    <div class="customer-orders-list" id="customerOrdersList">
+                        Loading orders...
+                    </div>
+                </div>
+
+                <div class="customer-tab-panel" id="activity">
+                    <h4>Recent Activity</h4>
+                    <div class="customer-activity-list" id="customerActivityList">
+                        Loading activities...
+                    </div>
+                </div>
+
+                <div class="customer-tab-panel" id="preferences">
+                    <h4>Customer Preferences</h4>
+                    <div class="customer-preferences" id="customerPreferences">
+                        Loading preferences...
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <!-- Session Warning Modal -->
-    <div class="modal" id="sessionWarningModal">
+    <!-- Bulk Email Modal -->
+    <div class="modal" id="bulkEmailModal">
         <div class="modal-content">
-            <div class="session-warning">
-                <h3>⚠️ Session Expiring</h3>
-                <p>Your admin session will expire in <span id="sessionCountdown">5:00</span></p>
-                <div class="session-actions">
-                    <button class="admin-btn" onclick="extendSession()">Extend Session</button>
-                    <button class="admin-btn secondary" onclick="adminLogout()">Logout Now</button>
-                </div>
+            <span class="close" onclick="closeBulkEmailModal()">&times;</span>
+            <div class="bulk-email-container">
+                <h2>Send Bulk Email</h2>
+                <form id="bulkEmailForm">
+                    <div class="form-group">
+                        <label for="emailSubject">Subject</label>
+                        <input type="text" id="emailSubject" placeholder="Enter email subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailMessage">Message</label>
+                        <textarea id="emailMessage" rows="8" placeholder="Enter your message..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="closeBulkEmailModal()" class="admin-btn secondary">Cancel</button>
+                        <button type="submit" class="admin-btn primary">Send Email</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script src="admin.js"></script>
-    <script src="auth.js"></script>
 </body>
 </html>
