@@ -1,9 +1,0 @@
-[build]
-  command = ""
-  publish = "."
-
-[[plugins]]
-  package = "@netlify/plugin-visual-editor"
-
-[template.environment]
-  NETLIFY_VISUAL_EDITOR = "true"
