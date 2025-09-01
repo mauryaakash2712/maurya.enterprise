@@ -1,0 +1,8 @@
+{
+  "name": "mtech-website",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@netlify/plugin-visual-editor": "^1.0.0"
+  }
+}
